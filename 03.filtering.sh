@@ -2,7 +2,7 @@
 
 source ./util.sh
 
-if [[ ${ENV_PACKAGE} == 'human-gut' ]];
+if [[ ${ENV_PACKAGE} == 'human-gut' && ${TMI_DATATYPE} == '16S' ]];
 then
     qiime feature-table filter-features \
         --i-table ${d}/$(tag).biom.qza \
@@ -10,7 +10,9 @@ then
         --p-exclude-ids \
         --o-filtered-table ${d}/$(tag_nobloom).biom.qza
 else
-    cp ${d}/$(tag).biom.qza ${d}/$(tag_nobloom).biom.qza
+    # $(tag) and $(tag_nobloom) are the same filenames if no filtering 
+    # is performed, so no need to do anything
+    echo "Not filtering blooms"
 fi
 
 qiime feature-table filter-features \
@@ -23,7 +25,12 @@ qiime feature-table filter-samples \
     --p-min-frequency ${min_sample_depth} \
     --o-filtered-table ${d}/$(tag_mindepth).biom.qza
 
-qiime feature-table filter-seqs \
-    --i-table ${d}/$(tag_mindepth).biom.qza \
-    --i-data ${d}/$(tag).fna.qza \
-    --o-filtered-data ${d}/$(tag_mindepth).fna.qza
+if [[ ${TMI_DATATYPE} == '16S' ]];
+then
+    # 16S features are sequences, which we reduce here to
+    # limit burden on classification and fragment insertion
+    qiime feature-table filter-seqs \
+        --i-table ${d}/$(tag_mindepth).biom.qza \
+        --i-data ${d}/$(tag).fna.qza \
+        --o-filtered-data ${d}/$(tag_mindepth).fna.qza
+fi
