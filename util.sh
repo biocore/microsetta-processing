@@ -6,23 +6,30 @@ set -e
 qiime_version=2020.2
 source activate qiime2-${qiime_version}
 
+if [[ -z ${TMI_DATATYPE} ]];
+then
+    echo "No data set!"
+    exit 1
+fi
+
 if [[ ${TMI_DATATYPE} == "WGS" ]];
 then
     redbiom_ctx=Woltka-wol-072020-Woltka-pergenome-200b91-677a58
     trim_length=None
-    min_feature_count=100
+    min_feature_count=400  # .1% upper bound
     min_sample_depth=400000
     rarefaction_replacement="with"
+    ambiguities="merge"
+    hash_features="False"
 else
-    # NOTE: these need to be consistent!
     redbiom_ctx=Deblur-Illumina-16S-V4-100nt-fbc5b2
     trim_length=100
     min_feature_count=2
     min_sample_depth=1000
     rarefaction_replacement="no-with"
+    ambiguities="most-reads"
+    hash_features="True"
 fi
-
-
 
 function tag_even () {
     echo "$(tag_treeoverlap).even"
@@ -62,7 +69,7 @@ function tag () {
 
 function base () {
     if [ -z "${AG_DEBUG}" ]; then
-        echo "$(readlink ../current-${ENV_PACKAGE})"
+        echo "../$(readlink ../current-${ENV_PACKAGE})"
     else
         mkdir -p ../current-debug
         echo "../current-debug"

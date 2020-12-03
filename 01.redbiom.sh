@@ -14,8 +14,8 @@ redbiom fetch samples \
     --context $redbiom_ctx \
     --output ${d}/$(tag).biom \
     --from ${d}/$(tag).ids \
-    --resolve-ambiguities most-reads \
-    --md5 true
+    --resolve-ambiguities ${ambiguities} \
+    --md5 ${hash_features}
 
 redbiom fetch sample-metadata \
     --context $redbiom_ctx \
@@ -23,5 +23,3 @@ redbiom fetch sample-metadata \
     --all-columns \
     --resolve-ambiguities \
     --from ${d}/$(tag).ids
-
-awk '{ print ">" $2 "\n" $1 }' ${d}/$(tag).biom.tsv > ${d}/$(tag).fna
