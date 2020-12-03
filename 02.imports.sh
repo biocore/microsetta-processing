@@ -3,8 +3,8 @@
 source ./util.sh
 
 qiime tools import \
-    --input-path ${d}/ag.biom \
-    --output-path ${d}/ag.biom.qza \
+    --input-path ${d}/raw.biom \
+    --output-path ${d}/raw.biom.qza \
     --type FeatureTable[Frequency]
 
 wget \
@@ -17,8 +17,8 @@ for s in $(grep -v "^>" ${d}/newbloom.all.fna | cut -c 1-${trim_length}); do
 done | sort - | uniq | awk '{ print ">" $1 "\n" $2 }' > ${d}/newbloom.all.${trim_length}nt.fna
 
 qiime tools import \
-    --input-path ${d}/ag.fna \
-    --output-path ${d}/ag.fna.qza \
+    --input-path ${d}/raw.fna \
+    --output-path ${d}/raw.fna.qza \
     --type FeatureData[Sequence]
 
 qiime tools import \
