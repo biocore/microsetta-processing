@@ -8,6 +8,6 @@ wget \
 
 qiime feature-classifier classify-sklearn \
     --i-classifier ${d}/gg-13-8-99-515-806-nb-classifier.qza \
-    --i-reads ${d}/raw.fna.nobloom.minfeat.mindepth.qza \
+    --i-reads ${d}/$(tag_mindepth).fna.qza \
     --p-n-jobs ${nprocs} \
-    --o-classification ${d}/raw.fna.nobloom.minfeat.mindepth.taxonomy.qza
+    --o-classification ${d}/$(tag_mindepth).taxonomy.qza

@@ -4,24 +4,24 @@ source ./util.sh
 
 if [ -z "${AG_DEBUG}" ]; then
     redbiom search metadata \
-        "where qiita_study_id==10317 and env_package=='${ENV_PACKAGE}'" > ${d}/raw.ids
+        "where qiita_study_id==10317 and env_package=='${ENV_PACKAGE}'" > ${d}/$(tag).ids
 else
     redbiom search metadata \
-        "where qiita_study_id==10317 and env_package=='${ENV_PACKAGE}'" | head -n 100 > ${d}/raw.ids
+        "where qiita_study_id==10317 and env_package=='${ENV_PACKAGE}'" | head -n 1000 > ${d}/$(tag).ids
 fi
 
 redbiom fetch samples \
     --context $redbiom_ctx \
-    --output ${d}/raw.biom \
-    --from ${d}/raw.ids \
+    --output ${d}/$(tag).biom \
+    --from ${d}/$(tag).ids \
     --resolve-ambiguities most-reads \
     --md5 true
 
 redbiom fetch sample-metadata \
     --context $redbiom_ctx \
-    --output ${d}/raw.txt \
+    --output ${d}/$(tag).txt \
     --all-columns \
     --resolve-ambiguities \
-    --from ${d}/raw.ids
+    --from ${d}/$(tag).ids
 
-awk '{ print ">" $2 "\n" $1 }' ${d}/raw.biom.tsv > ${d}/raw.fna
+awk '{ print ">" $2 "\n" $1 }' ${d}/$(tag).biom.tsv > ${d}/$(tag).fna
