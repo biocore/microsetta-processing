@@ -2,6 +2,7 @@ import qiime2
 import click
 import pandas as pd
 import biom
+import numpy as np
 
 
 def _table_and_ids(qza):
@@ -152,7 +153,7 @@ def extract_latlong(table, metadata, output, additional_categories):
                                   "features")
 @click.option('--rarefied-table', type=click.Path(exists=True), required=True,
               help="The rarefied table")
-def update(metadata, original_table, no_bloom_table, no_singletons_table,
+def sample_status(metadata, original_table, no_bloom_table, no_singletons_table,
            min_count_table, only_inserted_table, rarefied_table):
     md = pd.read_csv(metadata, sep='\t', dtype=str).set_index('#SampleID')
     md_ids = set(md.index)
@@ -164,8 +165,8 @@ def update(metadata, original_table, no_bloom_table, no_singletons_table,
     only_inserted_table, _ = _table_and_ids(only_inserted_table)
     rarefied_table, _ = _table_and_ids(rarefied_table)
 
-    bloom_counts, bloom_proportion = bloom_counts_and_proportion(original_table,
-                                                                 no_bloom_table)
+    bloom_counts, bloom_proportion = _bloom_counts_and_proportion(original_table,
+                                                                  no_bloom_table)
     md['total-reads'] = 0
     total_reads = pd.Series(original_table.sum('sample'),
                             index=original_table.ids())
