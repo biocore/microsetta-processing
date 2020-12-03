@@ -15,6 +15,6 @@ do
 
     qiime emperor plot \
         --i-pcoa ${d}/beta/pcoa/${name}.qza \
-        --m-metadata-file ${d}/ag.txt \
+        --m-metadata-file ${d}/raw.txt \
         --o-visualization ${d}/beta/emp/${name}.qzv
 done
