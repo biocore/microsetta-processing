@@ -12,6 +12,13 @@ then
     exit 1
 fi
 
+if [[ -z ${STUDIES} ]] ;
+then
+    echo "No studies specified!"
+    exit 1
+fi
+studies_tag=$(echo ${STUDIES} | tr "." "-")
+
 if [[ ${TMI_DATATYPE} == "WGS" ]];
 then
     redbiom_ctx=Woltka-wol-072020-Woltka-pergenome-200b91-677a58
@@ -81,7 +88,7 @@ if [ ! -d "$(base)" ]; then
     exit 1
 fi
 
-d="$(base)/${TMI_DATATYPE}"
+d="$(base)/${TMI_DATATYPE}/${studies_tag}"
 mkdir -p ${d}
 
 if [ -z "$PBS_NUM_PPN" ]; then
