@@ -4,6 +4,15 @@ source ./util.sh
 
 mkdir -p ${d}/taxa
 
+if [[ ${TMI_DATATYPE} == 'WGS' ]];
+then
+    qiime taxa collapse \
+        --i-table ${d}/$(tag_treeoverlap).biom.qza \
+        --i-taxonomy ${d}/$(tag_mindepth).taxonomy.qza \
+        --p-level 7 \
+        --o-collapsed-table ${d}/taxa/species.qza
+fi
+
 qiime taxa collapse \
     --i-table ${d}/$(tag_treeoverlap).biom.qza \
     --i-taxonomy ${d}/$(tag_mindepth).taxonomy.qza \

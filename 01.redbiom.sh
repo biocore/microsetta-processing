@@ -2,24 +2,15 @@
 
 source ./util.sh
 
-# split studies on ".", and put into an array
-# https://stackoverflow.com/a/10586169
-IFS='.' read -r -a study_array <<< "${STUDIES}"
-
-study_list=""
-for study in "${study_array[@]}"
-do
-    study_list+=\'
-    study_list+=${study}
-    study_list+=\',
-done
+study_list=$(create_redbiom_contains ${STUDIES})
+env_list=$(create_redbiom_contains ${ENV_PACKAGE})
 
 if [ -z "${AG_DEBUG}" ]; then
     redbiom search metadata \
-        "where qiita_study_id in (${study_list}) and env_package=='${ENV_PACKAGE}'" > ${d}/$(tag).ids
+        "where qiita_study_id in (${study_list}) and env_package in (${env_list})" > ${d}/$(tag).ids
 else
     redbiom search metadata \
-        "where qiita_study_id in (${study_list}) and env_package=='${ENV_PACKAGE}'" | head -n 1000 > ${d}/$(tag).ids
+        "where qiita_study_id in (${study_list}) and env_package in (${env_list})" | head -n 1000 > ${d}/$(tag).ids
 fi
 
 redbiom fetch samples \
