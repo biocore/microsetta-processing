@@ -2,7 +2,9 @@
 
 source ./util.sh
 
-if [[ ${ENV_PACKAGE} == 'human-gut' && ${TMI_DATATYPE} == '16S' ]];
+# the unusual syntax is to check for the presence of a substring
+# https://stackoverflow.com/a/15394738
+if [[ ${ENV_PACKAGE} == *"human-gut"* && ${TMI_DATATYPE} == '16S' ]];
 then
     qiime feature-table filter-features \
         --i-table ${d}/$(tag).biom.qza \

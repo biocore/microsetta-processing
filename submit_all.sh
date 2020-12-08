@@ -48,6 +48,6 @@ fi
 s05a=$(echo "cd ${cwd}; sh 05a.rarefy.sh" | qsub -W depend=afterok:${s04b} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N TMI05a-${TMI_DATATYPE})
 s05b=$(echo "cd ${cwd}; sh 05b.alpha.sh" | qsub -W depend=afterok:${s05a} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N TMI05b-${TMI_DATATYPE})
 s05c=$(echo "cd ${cwd}; sh 05c.beta.sh" | qsub -W depend=afterok:${s05a} -l nodes=1:ppn=8 -l mem=16g -l walltime=16:00:00 ${qsub_common} -N TMI05c-${TMI_DATATYPE})
-s05d=$(echo "cd ${cwd}; sh 05d.collapse-taxa.sh" | qsub -W depend=afterok:${s04a}:${s04b} -l nodes=1:ppn=1 -l mem=16g -l walltime=2:00:00 ${qsub_common} -N TMI05d-${TMI_DATATYPE})
-s06=$(echo "cd ${cwd}; sh 06.subsets-interest.sh" | qsub -W depend=afterok:${s05c}:${s05d} -l nodes=1:ppn=1 -l mem=16g -l walltime=2:00:00 ${qsub_common} -N TMI06-${TMI_DATATYPE})
+s05d=$(echo "cd ${cwd}; sh 05d.collapse-taxa.sh" | qsub -W depend=afterok:${s04a}:${s04b} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N TMI05d-${TMI_DATATYPE})
+s06=$(echo "cd ${cwd}; sh 06.subsets-interest.sh" | qsub -W depend=afterok:${s05c}:${s05d} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N TMI06-${TMI_DATATYPE})
 s07a=$(echo "cd ${cwd}; sh 07a.pcoa.sh" | qsub -W depend=afterok:${s06} -l nodes=1:ppn=1 -l mem=16g -l walltime=2:00:00 ${qsub_common} -N TMI07a-${TMI_DATATYPE})

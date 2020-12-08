@@ -17,7 +17,6 @@ then
     echo "No studies specified!"
     exit 1
 fi
-studies_tag=$(echo ${STUDIES} | tr "." "-")
 
 if [[ ${TMI_DATATYPE} == "WGS" ]];
 then
@@ -37,6 +36,23 @@ else
     ambiguities="most-reads"
     hash_features="True"
 fi
+
+function create_redbiom_contains () {
+    # convert "foo.bar" -> "'foo','bar'"
+
+    # split studies on ".", and put into an array
+    # https://stackoverflow.com/a/10586169
+    IFS='.' read -r -a arr <<< "${1}"
+
+    rblist=""
+    for elm in "${arr[@]}"
+    do
+        rblist+=\'
+        rblist+=${elm}
+        rblist+=\',
+    done
+    echo $rblist
+}
 
 function tag_even () {
     echo "$(tag_treeoverlap).even"
@@ -88,7 +104,7 @@ if [ ! -d "$(base)" ]; then
     exit 1
 fi
 
-d="$(base)/${TMI_DATATYPE}/${studies_tag}"
+d="$(base)/${TMI_DATATYPE}/${STUDIES}"
 mkdir -p ${d}
 
 if [ -z "$PBS_NUM_PPN" ]; then
