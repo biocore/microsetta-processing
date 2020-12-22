@@ -2,6 +2,8 @@
 
 source ./util.sh
 
+python metadata_operations.py dataset-details --output ${d}/detail.json
+
 study_list=$(create_redbiom_contains ${STUDIES})
 env_list=$(create_redbiom_contains ${ENV_PACKAGE})
 
