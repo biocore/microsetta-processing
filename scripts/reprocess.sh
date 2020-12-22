@@ -2,6 +2,8 @@
 
 set -e
 
+cd "$(dirname "$0")"
+
 STUDY_TMI=10317
 STUDY_META_16S_FECAL=11358.850.2024.11937.11993.10581.10352.10249
 STUDY_META_16S_MIXED=2136.10052.10333.11724.11874.1189.1774.550
@@ -14,6 +16,7 @@ HUMAN_SKIN=human-skin
 HUMAN_ORAL=human-oral
 HUMAN_MIXED=human-gut.human-oral.human-skin
 
+mkdir -p ../results
 pushd ../results
 datetag=$(date +"%d%b%Y")
 
