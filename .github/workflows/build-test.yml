@@ -24,8 +24,9 @@ jobs:
         flake8 scripts/*.py
   build-and-test:
     runs-on: ubuntu-latest
+    container:
+      image: docker://quay.io/qiime2/core:2020.11
     steps:
-    - uses: docker://quay.io/qiime2/core:2020.11
     - uses: actions/checkout@v2
     - name: exercise
       run: |
