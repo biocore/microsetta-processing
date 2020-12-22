@@ -47,7 +47,7 @@ fi
 qsub=qsub
 if [[ ! $(command -v qsub) ]]; 
 then
-    qsub=qsub-capture.sh
+    qsub=$(pwd)/qsub-capture.sh
 fi
 
 cwd=$(pwd)
