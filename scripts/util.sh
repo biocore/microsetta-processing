@@ -94,7 +94,7 @@ function tag () {
 
 function base () {
     if [ -z "${AG_DEBUG}" ]; then
-        echo "../$(readlink ../results/current/${ENV_PACKAGE})"
+        echo "../results/current/${ENV_PACKAGE}"
     else
         mkdir -p ../current-debug
         echo "../current-debug"

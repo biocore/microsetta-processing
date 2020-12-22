@@ -227,7 +227,7 @@ def dataset_details(output):
         raise ValueError("No datatype provided")
 
     obj = {'name': name,
-           'title': title,
+           'title': title.replace('.', ' '),
            'datatype': datatype,
            'environments': env_package.split('.'),
            'qiita-study-ids': studies.split('.')}

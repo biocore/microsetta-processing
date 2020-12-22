@@ -17,9 +17,16 @@ python metadata_operations.py single-subject \
     --metadata ${d}/$(tag).txt \
     --output ${d}/$(tag).denotes-single-subject-sample.txt
 
+if [[ -z "../columns/${TMI_NAME}.columns_of_interest.txt" ]];
+then
+    columns_of_interest=../columns/${TMI_NAME}.columns_of_interest.txt
+else
+    columns_of_interest=../columns/columns_of_interest.txt
+fi
+
 python metadata_operations.py columns-of-interest \
     --metadata ${d}/$(tag).txt \
-    --columns columns_of_interest.txt \
+    --columns ${columns_of_interest} \
     --output ${d}/$(tag).columns_of_interest.txt
 
 for ar in ${d}/taxa/*.qza

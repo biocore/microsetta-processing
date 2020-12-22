@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -x
 
 if [[ -z ${TMI_NAME} ]];
 then
@@ -32,12 +33,18 @@ then
     exit 1
 fi
 
+cd "$(dirname "$0")"
 datetag=$(date +"%Y-%m-%d.%H%M")
-logbase=$HOME/ag-4nov2019-redbiom/logs
+logbase=../logs
 logdir=${logbase}/${datetag}-${TMI_NAME}-${TMI_DATATYPE}
 mkdir -p ${logdir}
 
-qsub_common="-v ENV_PACKAGE=${ENV_PACKAGE},TMI_DATATYPE=${TMI_DATATYPE},STUDIES=${STUDIES} -o ${logdir} -e ${logdir}"
+qsub_vars="-v ENV_PACKAGE=${ENV_PACKAGE}"
+qsub_vars=${qsub_vars},TMI_DATATYPE=${TMI_DATATYPE}
+qsub_vars=${qsub_vars},STUDIES=${STUDIES}
+qsub_vars=${qsub_vars},TMI_NAME=${TMI_NAME}
+qsub_vars=${qsub_vars},TMI_TITLE=$(echo ${TMI_TITLE} | tr " " ".")
+qsub_common="-o ${logdir} -e ${logdir} ${qsub_vars}"
 
 if [[ ! -z ${EMAIL} ]];
 then
