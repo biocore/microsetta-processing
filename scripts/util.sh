@@ -3,8 +3,10 @@
 set -x
 set -e
 
-qiime_version=2020.2
-source activate qiime2-${qiime_version}
+if [[ -z ${QIIME_VERSION} ]]; then
+    QIIME_VERSION=2020.2
+fi
+source activate qiime2-${QIIME_VERSION}
 
 if [[ -z ${TMI_DATATYPE} ]];
 then

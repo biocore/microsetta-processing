@@ -32,14 +32,17 @@ then
     exit 1
 fi
 
-contact_email=d3mcdonald@eng.ucsd.edu
-
 datetag=$(date +"%Y-%m-%d.%H%M")
 logbase=$HOME/ag-4nov2019-redbiom/logs
 logdir=${logbase}/${datetag}-${TMI_NAME}-${TMI_DATATYPE}
 mkdir -p ${logdir}
 
-qsub_common="-v ENV_PACKAGE=${ENV_PACKAGE},TMI_DATATYPE=${TMI_DATATYPE},STUDIES=${STUDIES} -o ${logdir} -e ${logdir} -M ${contact_email} -m ae"
+qsub_common="-v ENV_PACKAGE=${ENV_PACKAGE},TMI_DATATYPE=${TMI_DATATYPE},STUDIES=${STUDIES} -o ${logdir} -e ${logdir}"
+
+if [[ ! -z ${EMAIL} ]];
+then
+    qsub_common="${qsub_common} -M ${EMAIL} -m ae"
+fi
 
 cwd=$(pwd)
 s01=$(echo "cd ${cwd}; sh 01.redbiom.sh" | qsub -l nodes=1:ppn=1 -l mem=16g -l walltime=8:00:00 ${qsub_common} -N TMI01-${TMI_NAME})
