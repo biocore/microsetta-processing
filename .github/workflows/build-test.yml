@@ -1,0 +1,41 @@
+# based on https://github.com/qiime2/q2-diversity-lib/blob/master/.github/workflows/lint-build-test.yml
+name: build-test
+# build on every PR and commit to master
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: set up python 3.6
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.6
+    - name: lint it
+      run: python -m pip install --upgrade pip
+    - name: lint
+      run: |
+        pip install -q flake8
+        flake8 scripts/*.py
+  build-and-test:
+    runs-on: ubuntu-latest
+    container:
+      image: docker://quay.io/qiime2/core:2020.11
+    steps:
+    - uses: actions/checkout@v2
+    - name: exercise
+      run: |
+        pip install redbiom
+        export AG_DEBUG=True
+        export TMI_NAME=test
+        export TMI_TITLE=test
+        export STUDIES=10317
+        export ENV_PACKAGE=human-gut
+        export TMI_DATATYPE=WGS
+        export QIIME_VERSION=2020.11
+        cd scripts; bash submit_all.sh    

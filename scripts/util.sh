@@ -4,7 +4,7 @@ set -x
 set -e
 
 if [[ -z ${QIIME_VERSION} ]]; then
-    QIIME_VERSION=2020.2
+    QIIME_VERSION=2020.11
 fi
 source activate qiime2-${QIIME_VERSION}
 
@@ -94,7 +94,7 @@ function tag () {
 
 function base () {
     if [ -z "${AG_DEBUG}" ]; then
-        echo "../$(readlink ../results/current/${ENV_PACKAGE})"
+        echo "../results/current/${ENV_PACKAGE}"
     else
         mkdir -p ../current-debug
         echo "../current-debug"

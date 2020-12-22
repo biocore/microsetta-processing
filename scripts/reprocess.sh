@@ -39,46 +39,45 @@ mkdir -p ${datetag}/${HUMAN_MIXED}
 popd
 
 # Microsetta 16S specific
-#TMI_DATATYPE=$TYPE_16S
-#ENV_PACKAGE=$HUMAN_GUT
-#STUDIES=$STUDY_TMI
-#TMI_TITLE="Microsetta 16S fecal samples"
-#TMI_NAME=tmi-gut-16S
-#sh submit_all.sh
-#
-#ENV_PACKAGE=$HUMAN_SKIN
-#STUDIES=$STUDY_TMI
-#TMI_TITLE="Microsetta 16S skin samples"
-#TMI_NAME=tmi-skin-16S
-#sh submit_all.sh
-#
-#ENV_PACKAGE=$HUMAN_ORAL
-#STUDIES=$STUDY_TMI
-#TMI_TITLE="Microsetta 16S oral samples"
-#TMI_NAME=tmi-oral-16S
-#sh submit_all.sh
-#
+export TMI_DATATYPE=$TYPE_16S
+export ENV_PACKAGE=$HUMAN_GUT
+export STUDIES=$STUDY_TMI
+export TMI_TITLE="Microsetta 16S fecal samples"
+export TMI_NAME=tmi-gut-16S
+sh submit_all.sh
+
+export ENV_PACKAGE=$HUMAN_SKIN
+export STUDIES=$STUDY_TMI
+export TMI_TITLE="Microsetta 16S skin samples"
+export TMI_NAME=tmi-skin-16S
+sh submit_all.sh
+
+export ENV_PACKAGE=$HUMAN_ORAL
+export STUDIES=$STUDY_TMI
+export TMI_TITLE="Microsetta 16S oral samples"
+export TMI_NAME=tmi-oral-16S
+sh submit_all.sh
+
 # Microsetta WGS specific
-TMI_DATATYPE=$TYPE_WGS
-ENV_PACKAGE=$HUMAN_GUT
-STUDIES=$STUDY_TMI
-TMI_TITLE="Microsetta WGS fecal samples"
-TMI_NAME=tmi-gut-WGS
+export TMI_DATATYPE=$TYPE_WGS
+export ENV_PACKAGE=$HUMAN_GUT
+export STUDIES=$STUDY_TMI
+export TMI_TITLE="Microsetta WGS fecal samples"
+export TMI_NAME=tmi-gut-WGS
 sh submit_all.sh
 
 # Multipop gut 16S
-#TMI_DATATYPE=$TYPE_16S
-#ENV_PACKAGE=$HUMAN_GUT
-#STUDIES=${STUDY_TMI}.${STUDY_META_16S_FECAL}
-#TMI_TITLE="Meta-analysis 16S fecal samples"
-#TMI_NAME=meta-gut-16S
-#sh submit_all.sh
-#
-## Multibody site 16S
-#TMI_DATATYPE=$TYPE_16S
-#ENV_PACKAGE=$HUMAN_MIXED
-#STUDIES=${STUDY_TMI}.${STUDY_META_16S_MIXED}
-#TMI_TITLE="Meta-analysis 16S multi-bodysite samples"
-#TMI_NAME=meta-mixed-16S
-#sh submit_all.sh
-#
+export TMI_DATATYPE=$TYPE_16S
+export ENV_PACKAGE=$HUMAN_GUT
+export STUDIES=${STUDY_TMI}.${STUDY_META_16S_FECAL}
+export TMI_TITLE="Meta-analysis 16S fecal samples"
+export TMI_NAME=meta-gut-16S
+sh submit_all.sh
+
+# Multibody site 16S
+export TMI_DATATYPE=$TYPE_16S
+export ENV_PACKAGE=$HUMAN_MIXED
+export STUDIES=${STUDY_TMI}.${STUDY_META_16S_MIXED}
+export TMI_TITLE="Meta-analysis 16S multi-bodysite samples"
+export TMI_NAME=meta-mixed-16S
+sh submit_all.sh
