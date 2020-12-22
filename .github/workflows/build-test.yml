@@ -38,5 +38,4 @@ jobs:
         export ENV_PACKAGE=human-gut
         export TMI_DATATYPE=WGS
         export QIIME_VERSION=2020.11
-        alias qsub=$(pwd)/scripts/qsub-capture.sh
         cd scripts; bash submit_all.sh    

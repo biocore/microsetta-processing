@@ -44,6 +44,11 @@ then
     qsub_common="${qsub_common} -M ${EMAIL} -m ae"
 fi
 
+if [[ ! $(command -v qsub) ]]; 
+then
+    alias qsub=qsub-capture.sh
+fi
+
 cwd=$(pwd)
 s01=$(echo "cd ${cwd}; sh 01.redbiom.sh" | qsub -l nodes=1:ppn=1 -l mem=16g -l walltime=8:00:00 ${qsub_common} -N TMI01-${TMI_NAME})
 s02=$(echo "cd ${cwd}; sh 02.imports.sh" | qsub -W depend=afterok:${s01} -l nodes=1:ppn=1 -l mem=16g -l walltime=2:00:00 ${qsub_common} -N TMI02-${TMI_NAME})
