@@ -42,7 +42,3 @@ qiime taxa collapse \
     --i-taxonomy ${d}/$(tag_mindepth).taxonomy.qza \
     --p-level 2 \
     --o-collapsed-table ${d}/taxa/phylum.qza
-
-python taxa_operations.py \
-    --table ${d}/taxa/genus.qza \
-    --output ${d}/taxa/top_genera_ranked.qza
