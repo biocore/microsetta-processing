@@ -3,6 +3,8 @@ import click
 import pandas as pd
 import biom
 import numpy as np
+import os
+import json
 
 
 def _table_and_ids(qza):
@@ -197,6 +199,40 @@ def sample_status(metadata, original_table, no_bloom_table, no_singletons_table,
     md.loc[lost_from_rarefaction, category] = 'Too few sequences after rarefaction'
 
     md.to_csv(metadata, sep='\t', index=True, header=True)
+
+
+@cli.command(name='dataset-details')
+@click.option('--output', type=click.Path(exists=False),
+              help='The path to write the details too')
+def dataset_details(output):
+    # write out a json object compatible with
+    # https://github.com/biocore/microsetta-public-api/blob/e12c8b72b631291b4483a0e27838fe67ecf890af/microsetta_public_api/api/microsetta_public_api.yml#L1464-L1485
+
+    studies = os.environ.get('STUDIES')
+    env_package = os.environ.get('ENV_PACKAGE')
+    title = os.environ.get('TMI_TITLE')
+    name = os.environ.get('TMI_NAME')
+    datatype = os.environ.get('TMI_DATATYPE')
+
+    if studies is None:
+        raise ValueError("No studies provided")
+    if env_package is None:
+        raise ValueError("No environment provided")
+    if title is None:
+        raise ValueError("No title provided")
+    if name is None:
+        raise ValueError("No name provided")
+    if datatype is None:
+        raise ValueError("No datatype provided")
+
+    obj = {'name': name,
+           'title': title,
+           'datatype': datatype,
+           'environments': env_package.split('.'),
+           'qiita-study-ids': studies.split('.')}
+
+    with open(output, 'w') as fp:
+        fp.write(json.dumps(obj, indent=2))
 
 
 if __name__ == '__main__':
