@@ -9,7 +9,7 @@ qiime diversity alpha \
     --p-metric shannon \
     --o-alpha-diversity ${d}/alpha/shannon.qza
 
-qiime diversity alpha-phylogenetic-alt \
+qiime diversity alpha-phylogenetic \
     --i-table ${d}/$(tag_even).biom.qza \
     --i-phylogeny ${d}/$(tag_mindepth).tree.qza \
     --p-metric faith_pd \
