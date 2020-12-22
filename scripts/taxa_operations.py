@@ -4,6 +4,7 @@ import click
 import numpy as np
 import pandas as pd
 
+
 @click.command()
 @click.option('--table', type=click.Path(exists=True), required=True)
 @click.option('--output', type=click.Path(exists=False), required=True)
@@ -36,15 +37,18 @@ def top(table, output, top_n):
                             inplace=False)
 
     # set names to the most specific taxon
-    collapse_map = {i: i.rsplit(';')[-1] for i in rank_top.ids(axis='observation')}
+    collapse_map = {i: i.rsplit(';')[-1]
+                    for i in rank_top.ids(axis='observation')}
     rank_top = rank_top.collapse(lambda i, m: collapse_map[i],
                                  axis='observation', norm=False)
     rank_top.rankdata(inplace=True)
 
     # store the order in the table
     rank_top_order = medians.sort_values(ascending=False).head(top_n).index
-    rank_top_order = {i.rsplit(';')[-1]: idx for idx, i in enumerate(rank_top_order)}
-    rank_top.add_metadata({'order': rank_top_order[i] for i in rank_top.ids(axis='observation')},
+    rank_top_order = {i.rsplit(';')[-1]: idx
+                      for idx, i in enumerate(rank_top_order)}
+    rank_top.add_metadata({'order': rank_top_order[i]
+                           for i in rank_top.ids(axis='observation')},
                           axis='observation')
 
     ar = qiime2.Artifact.import_data('FeatureTable[Frequency]', rank_top)

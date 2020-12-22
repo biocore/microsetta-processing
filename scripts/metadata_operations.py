@@ -25,7 +25,6 @@ def _bloom_counts_and_proportion(original, bloom_free):
             (raw_counts - nobloom_counts) / raw_counts)  # proportion of bloom
 
 
-
 def _single_subject(md):
     md = md.copy()
     md['collection_date_only'] = pd.to_datetime(md['collection_date_only'],
@@ -155,8 +154,9 @@ def extract_latlong(table, metadata, output, additional_categories):
                                   "features")
 @click.option('--rarefied-table', type=click.Path(exists=True), required=True,
               help="The rarefied table")
-def sample_status(metadata, original_table, no_bloom_table, no_singletons_table,
-           min_count_table, only_inserted_table, rarefied_table):
+def sample_status(metadata, original_table, no_bloom_table,
+                  no_singletons_table, min_count_table, only_inserted_table,
+                  rarefied_table):
     md = pd.read_csv(metadata, sep='\t', dtype=str).set_index('#SampleID')
     md_ids = set(md.index)
 
@@ -167,8 +167,9 @@ def sample_status(metadata, original_table, no_bloom_table, no_singletons_table,
     only_inserted_table, _ = _table_and_ids(only_inserted_table)
     rarefied_table, _ = _table_and_ids(rarefied_table)
 
-    bloom_counts, bloom_proportion = _bloom_counts_and_proportion(original_table,
-                                                                  no_bloom_table)
+    bloom_counts, bloom_proportion = \
+        _bloom_counts_and_proportion(original_table, no_bloom_table)
+
     md['total-reads'] = 0
     total_reads = pd.Series(original_table.sum('sample'),
                             index=original_table.ids())
@@ -177,7 +178,7 @@ def sample_status(metadata, original_table, no_bloom_table, no_singletons_table,
     md['bloom-proportion'] = bloom_proportion
 
     # > 5% bloom and with with more than 1000 sequences / sample raw
-    high_bloom = set(bloom_proportion[(bloom_proportion > 0.05) & \
+    high_bloom = set(bloom_proportion[(bloom_proportion > 0.05) &
                                       (total_reads > 1000)].index)
 
     category = 'processing-status'
@@ -190,13 +191,13 @@ def sample_status(metadata, original_table, no_bloom_table, no_singletons_table,
     lost_from_insertions = min_count_table - only_inserted_table
     lost_from_rarefaction = only_inserted_table - rarefied_table
 
-    md.loc[not_in_redbiom, category] = 'Not present in Qiita or missing sequence data'
-    md.loc[entirely_bloom, category] = 'The sample appears to be entirely bloom'
-    md.loc[lost_from_singletons, category] = 'Too few sequences before rarefaction'
+    md.loc[not_in_redbiom, category] = 'Not present in Qiita or missing sequence data'  # noqa
+    md.loc[entirely_bloom, category] = 'The sample appears to be entirely bloom'  # noqa
+    md.loc[lost_from_singletons, category] = 'Too few sequences before rarefaction'  # noqa
     md.loc[under_min_count & high_bloom, category] = 'High bloom sample'
-    md.loc[under_min_count - high_bloom, category] = 'Too few sequences before rarefaction'
-    md.loc[lost_from_insertions, category] = 'Could not identify placements for associated sequences'
-    md.loc[lost_from_rarefaction, category] = 'Too few sequences after rarefaction'
+    md.loc[under_min_count - high_bloom, category] = 'Too few sequences before rarefaction'  # noqa
+    md.loc[lost_from_insertions, category] = 'Could not identify placements for associated sequences'  # noqa
+    md.loc[lost_from_rarefaction, category] = 'Too few sequences after rarefaction'  # noqa
 
     md.to_csv(metadata, sep='\t', index=True, header=True)
 
@@ -206,7 +207,7 @@ def sample_status(metadata, original_table, no_bloom_table, no_singletons_table,
               help='The path to write the details too')
 def dataset_details(output):
     # write out a json object compatible with
-    # https://github.com/biocore/microsetta-public-api/blob/e12c8b72b631291b4483a0e27838fe67ecf890af/microsetta_public_api/api/microsetta_public_api.yml#L1464-L1485
+    # https://github.com/biocore/microsetta-public-api/blob/e12c8b72b631291b4483a0e27838fe67ecf890af/microsetta_public_api/api/microsetta_public_api.yml#L1464-L1485  # noqa
 
     studies = os.environ.get('STUDIES')
     env_package = os.environ.get('ENV_PACKAGE')
