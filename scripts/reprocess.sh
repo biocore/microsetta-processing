@@ -38,14 +38,16 @@ mkdir -p ${datetag}/${HUMAN_MIXED}
 
 popd
 
-# Microsetta 16S specific
-export TMI_DATATYPE=$TYPE_16S
+# Microsetta WGS specific
+export TMI_DATATYPE=$TYPE_WGS
 export ENV_PACKAGE=$HUMAN_GUT
 export STUDIES=$STUDY_TMI
-export TMI_TITLE="Microsetta 16S fecal samples"
-export TMI_NAME=tmi-gut-16S
+export TMI_TITLE="Microsetta WGS fecal samples"
+export TMI_NAME=tmi-gut-WGS
 sh submit_all.sh
 
+# Microsetta 16S specific
+export TMI_DATATYPE=$TYPE_16S
 export ENV_PACKAGE=$HUMAN_SKIN
 export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S skin samples"
@@ -58,12 +60,10 @@ export TMI_TITLE="Microsetta 16S oral samples"
 export TMI_NAME=tmi-oral-16S
 sh submit_all.sh
 
-# Microsetta WGS specific
-export TMI_DATATYPE=$TYPE_WGS
 export ENV_PACKAGE=$HUMAN_GUT
 export STUDIES=$STUDY_TMI
-export TMI_TITLE="Microsetta WGS fecal samples"
-export TMI_NAME=tmi-gut-WGS
+export TMI_TITLE="Microsetta 16S fecal samples"
+export TMI_NAME=tmi-gut-16S
 sh submit_all.sh
 
 # Multipop gut 16S
