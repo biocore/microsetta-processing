@@ -12,7 +12,7 @@ then
 else 
     wget \
       -O ${d}/gg-13-8-99-515-806-nb-classifier.qza \
-        "https://data.qiime2.org/${qiime_version}/common/gg-13-8-99-515-806-nb-classifier.qza"
+        "https://data.qiime2.org/${QIIME_VERSION}/common/gg-13-8-99-515-806-nb-classifier.qza"
 
     qiime feature-classifier classify-sklearn \
         --i-classifier ${d}/gg-13-8-99-515-806-nb-classifier.qza \
