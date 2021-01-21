@@ -82,9 +82,16 @@ function tag_nobloom () {
     basetag=$(tag)
     if [[ ${TMI_DATATYPE} == "WGS" ]];
     then
+        # if wgs, we do not filter for bloom
         echo "${basetag}"
     else
-        echo "${basetag}.nobloom"
+        if [[ ${ENV_PACKAGE} == *"human-gut"* ]];
+        then
+            # if not wgs, and using human gut samples, we filter for bloom
+            echo "${basetag}.nobloom"
+        else
+            echo "${basetag}"
+        fi
     fi
 }
 
