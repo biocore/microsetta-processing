@@ -12,12 +12,7 @@ python metadata_operations.py sample-status \
     --only-inserted-table ${d}/$(tag_treeoverlap).biom.qza \
     --rarefied-table ${d}/$(tag_even).biom.qza
 
-python metadata_operations.py single-subject \
-    --table ${d}/$(tag_even).biom.qza \
-    --metadata ${d}/$(tag).txt \
-    --output ${d}/$(tag).denotes-single-subject-sample.txt
-
-if [[ -z "../columns/${TMI_NAME}.columns_of_interest.txt" ]];
+if [[ -f "../columns/${TMI_NAME}.columns_of_interest.txt" ]];
 then
     columns_of_interest=../columns/${TMI_NAME}.columns_of_interest.txt
 else
@@ -29,22 +24,29 @@ python metadata_operations.py columns-of-interest \
     --columns ${columns_of_interest} \
     --output ${d}/$(tag).columns_of_interest.txt
 
-for ar in ${d}/taxa/*.qza
-do
-    name=$(basename ${ar} .qza)
-    qiime feature-table filter-samples \
-        --i-table ${ar} \
-        --m-metadata-file ${d}/$(tag).denotes-single-subject-sample.txt \
-        --p-where "[single_subject_sample]='True'" \
-        --o-filtered-table ${d}/taxa/${name}-single-subject-sample.qza
-done
-    
-for ar in ${d}/beta/*.qza
-do
-    name=$(basename ${ar} .qza)
-    qiime diversity filter-distance-matrix \
-        --i-distance-matrix ${ar} \
-        --m-metadata-file ${d}/$(tag).denotes-single-subject-sample.txt \
-        --p-where "[single_subject_sample]='True'" \
-        --o-filtered-distance-matrix ${d}/beta/${name}-single-subject-sample.qza
-done
+if [[ ! -z "${TMI_SINGLE_SUBJECT}" ]]; then
+    python metadata_operations.py single-subject \
+        --table ${d}/$(tag_even).biom.qza \
+        --metadata ${d}/$(tag).txt \
+        --output ${d}/$(tag).denotes-single-subject-sample.txt
+
+    for ar in ${d}/taxa/*.qza
+    do
+        name=$(basename ${ar} .qza)
+        qiime feature-table filter-samples \
+            --i-table ${ar} \
+            --m-metadata-file ${d}/$(tag).denotes-single-subject-sample.txt \
+            --p-where "[single_subject_sample]='True'" \
+            --o-filtered-table ${d}/taxa/${name}-single-subject-sample.qza
+    done
+        
+    for ar in ${d}/beta/*.qza
+    do
+        name=$(basename ${ar} .qza)
+        qiime diversity filter-distance-matrix \
+            --i-distance-matrix ${ar} \
+            --m-metadata-file ${d}/$(tag).denotes-single-subject-sample.txt \
+            --p-where "[single_subject_sample]='True'" \
+            --o-filtered-distance-matrix ${d}/beta/${name}-single-subject-sample.qza
+    done
+fi
