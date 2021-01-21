@@ -21,6 +21,8 @@ A set of environment variables control the processing:
 - `$STUDIES` contains a dot delimited list of Qiita study IDs to process. For example, "10317.850"is the combination of the American Gut (Microsetta) data and the data from Yatsunenko et al Nature 2012. [REQUIRED]
 - `$ENV_PACKAGE` contains a dot delimited list of EBI `env_package` values to process (e.g., "human-gut") [REQUIRED]
 - `$AG_DEBUG`, if set to true, limits processing to 1000 samples [OPTIONAL]
+- `$TMI_WEIGHTED_UNIFRAC`, if set, compute weighted unifrac in addition to unweighted [OPTIONAL]
+- `$TMI_SINGLE_SUBJECT`, if set, provide various outputs over an individual subject rather than all samples [OPTIONAL]
 
 If running `submit_all.sh` directly, or one of the individual scripts, it is necessary to specify the above required environment variables.
 
