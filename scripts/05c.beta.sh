@@ -12,7 +12,7 @@ qiime diversity beta-phylogenetic \
     --p-bypass-tips \
     --o-distance-matrix ${d}/beta/unweighted_unifrac.qza
 
-python k_neighbors.py \
+python k_neighbors.py neighbors \
     --distance-matrix ${d}/beta/unweighted_unifrac.qza \
     --output ${d}/beta/unweighted_unifrac_neighbors.qza \
     --k 100
@@ -26,7 +26,7 @@ if [[ ! -z "${TMI_WEIGHTED_UNIFRAC}" ]]; then
         --p-bypass-tips \
         --o-distance-matrix ${d}/beta/weighted_normalized_unifrac.qza
     
-    python k_neighbors.py \
+    python k_neighbors.py neighbors \
         --distance-matrix ${d}/beta/weighted_unifrac.qza \
         --output ${d}/beta/weighted_unifrac_neighbors.qza \
         --k 100

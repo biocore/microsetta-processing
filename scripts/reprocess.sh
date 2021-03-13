@@ -102,5 +102,4 @@ export TMI_NAME=meta-mixed-16S
 jobs+=($(sh submit_all.sh))
 
 dependency=$(join_by : ${jobs[@]})
-qsub -W depend=afterok:${dependency} 08construct-configuration.qsub
 echo "cd $(pwd); bash 08.cleanup.sh" | qsub -W depend=afterok:${dependency} -l nodes=1:ppn=1 -l mem=1g -l walltime=1:00:00 -N TMI08-cleanup
