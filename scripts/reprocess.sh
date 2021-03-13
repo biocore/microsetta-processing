@@ -35,8 +35,14 @@ mkdir -p ${datetag}/${HUMAN_GUT}
 mkdir -p ${datetag}/${HUMAN_SKIN}
 mkdir -p ${datetag}/${HUMAN_ORAL}
 mkdir -p ${datetag}/${HUMAN_MIXED}
-
 popd
+
+# join strings in an array, see 
+# https://stackoverflow.com/a/17841619
+function join_by { local IFS="$1"; shift; echo "$*"; }
+
+# create an array to house our jobs of interest
+declare -a jobs
 
 # Microsetta WGS specific
 export TMI_DATATYPE=$TYPE_WGS
@@ -44,7 +50,14 @@ export ENV_PACKAGE=$HUMAN_GUT
 export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta WGS fecal samples"
 export TMI_NAME=tmi-gut-WGS
-sh submit_all.sh
+jobs+=($(sh submit_all.sh))
+
+export TMI_DATATYPE=$TYPE_WGS
+export ENV_PACKAGE=$HUMAN_MIXED
+export STUDIES=$STUDY_TMI
+export TMI_TITLE="Microsetta WGS all samples"
+export TMI_NAME=tmi-mixed-WGS
+jobs+=($(sh submit_all.sh))
 
 # Microsetta 16S specific
 export TMI_DATATYPE=$TYPE_16S
@@ -52,19 +65,25 @@ export ENV_PACKAGE=$HUMAN_SKIN
 export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S skin samples"
 export TMI_NAME=tmi-skin-16S
-sh submit_all.sh
+jobs+=($(sh submit_all.sh))
 
 export ENV_PACKAGE=$HUMAN_ORAL
 export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S oral samples"
 export TMI_NAME=tmi-oral-16S
-sh submit_all.sh
+jobs+=($(sh submit_all.sh))
 
 export ENV_PACKAGE=$HUMAN_GUT
 export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S fecal samples"
 export TMI_NAME=tmi-gut-16S
-sh submit_all.sh
+jobs+=($(sh submit_all.sh))
+
+export ENV_PACKAGE=$HUMAN_MIXED
+export STUDIES=$STUDY_TMI
+export TMI_TITLE="Microsetta 16S all samples"
+export TMI_NAME=tmi-all-16S
+jobs+=($(sh submit_all.sh))
 
 # Multipop gut 16S
 export TMI_DATATYPE=$TYPE_16S
@@ -72,7 +91,7 @@ export ENV_PACKAGE=$HUMAN_GUT
 export STUDIES=${STUDY_TMI}.${STUDY_META_16S_FECAL}
 export TMI_TITLE="Meta-analysis 16S fecal samples"
 export TMI_NAME=meta-gut-16S
-sh submit_all.sh
+jobs+=($(sh submit_all.sh))
 
 # Multibody site 16S
 export TMI_DATATYPE=$TYPE_16S
@@ -80,4 +99,8 @@ export ENV_PACKAGE=$HUMAN_MIXED
 export STUDIES=${STUDY_TMI}.${STUDY_META_16S_MIXED}
 export TMI_TITLE="Meta-analysis 16S multi-bodysite samples"
 export TMI_NAME=meta-mixed-16S
-sh submit_all.sh
+jobs+=($(sh submit_all.sh))
+
+dependency=$(join_by : ${jobs[@]})
+qsub -W depend=afterok:${dependency} 08construct-configuration.qsub
+echo "cd $(pwd); bash 08.cleanup.sh" | qsub -W depend=afterok:${dependency} -l nodes=1:ppn=1 -l mem=1g -l walltime=1:00:00 -N TMI08-cleanup
