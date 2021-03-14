@@ -84,6 +84,7 @@ def cli():
 @click.option('--k', type=int, required=True, help='The number of neighbors')
 def neighbors(distance_matrix, output, k):
     dm = qiime2.Artifact.load(distance_matrix).view(DistanceMatrix)
+    k = min(len(dm.ids), k + 1) - 1  # account for len(dm) == k
     kn = get_neighbors(dm, k)
     kn.to_csv(output, sep='\t', index=True, header=True)
 
