@@ -28,6 +28,6 @@ if [[ ! -z "${TMI_WEIGHTED_UNIFRAC}" ]]; then
     
     python k_neighbors.py neighbors \
         --distance-matrix ${d}/beta/weighted_unifrac.qza \
-        --output ${d}/beta/weighted_unifrac_neighbors.qza \
+        --output ${d}/beta/weighted_unifrac_neighbors.tsv \
         --k 100
 fi
