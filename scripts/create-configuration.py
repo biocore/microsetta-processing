@@ -80,7 +80,7 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
                 }
             },
             '__alpha__': alpha,
-            '__beta__': beta,
+            # '__beta__': beta,
             '__neighbors__': neigh,
             '__pcoa__': {
                 'full-dataset': pcoa
