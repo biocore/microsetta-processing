@@ -67,6 +67,9 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
         pcoa = {os.path.splitext(os.path.basename(f))[0]: pre(f)
                 for f in glob.glob(d('beta/pcoa/*.qza'))
                 if f.endswith('unweighted_unifrac.qza')}
+        neigh = {os.path.splitext(os.path.basename(f))[0]: pre(f)
+                 for f in glob.glob(d('beta/*.tsv'))
+                 if f.endswith('neighbors.tsv')}
 
         datasets[name] = {
             '__dataset_detail__': detail,
@@ -78,6 +81,7 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
             },
             '__alpha__': alpha,
             '__beta__': beta,
+            '__neighbors__': neigh,
             '__pcoa__': {
                 'full-dataset': pcoa
                 }
