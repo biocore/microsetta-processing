@@ -2,6 +2,7 @@ import glob
 import click
 import json
 import os
+from os.path import splitext, join, basename, dirname
 import functools
 import pathlib
 import shutil
@@ -17,7 +18,7 @@ class Rewritter:
         if stripped.startswith('/'):
             # os.path.join will not prefix if starting with root
             stripped = stripped[1:]
-        replaced = os.path.join(new, stripped)
+        replaced = join(new, stripped)
         self.srcdst.append((path, stripped))
         return replaced
 
@@ -35,7 +36,7 @@ class Rewritter:
 @click.option('--actually-copy', is_flag=True, default=False,
               help="If specified, actually copy the files")
 def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
-    detail_files = glob.glob(os.path.join(base, '*/*/*/*.json'))
+    detail_files = glob.glob(join(base, '*/*/*/*.json'))
     rewritter = Rewritter()
 
     datasets = {}
@@ -43,8 +44,8 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
         detail = json.loads(open(detail_fp).read())
         name = detail.pop('name')
 
-        results_dir = os.path.dirname(detail_fp)
-        d = functools.partial(os.path.join, results_dir)
+        results_dir = dirname(detail_fp)
+        d = functools.partial(join, results_dir)
         pre = functools.partial(rewritter.replace_prefix, base, prefix)
 
         bloom = ''
@@ -53,21 +54,23 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
                 bloom = 'nobloom.'
                 break
 
-        metadata = pre(d('raw.txt'))
+        metadata = pre(d('raw.columns_of_interest.txt'))
         taxtable = pre(d(f'raw.{bloom}minfeat.mindepth.biom.qza'))
         taxtax = pre(d(f'raw.{bloom}minfeat.mindepth.taxonomy.qza'))
-        alpha = {os.path.splitext(os.path.basename(f))[0]: pre(f)
+        alpha = {splitext(basename(f))[0]: pre(f)
                  for f in glob.glob(d('alpha/*.qza'))}
 
         # naively limit to unweighted and all samples right now as we're
         # not doing anything with the other data yet
-        # beta = {os.path.splitext(os.path.basename(f))[0]: pre(f)
+        # beta = {splitext(basename(f))[0]: pre(f)
         #         for f in glob.glob(d('beta/*.qza'))
         #         if f.endswith('unweighted_unifrac.qza')}
-        pcoa = {os.path.splitext(os.path.basename(f))[0]: pre(f)
+        pcoa = {splitext(basename(f))[0]: pre(f)
                 for f in glob.glob(d('beta/pcoa/*.qza'))
                 if f.endswith('unweighted_unifrac.qza')}
-        neigh = {os.path.splitext(os.path.basename(f))[0]: pre(f)
+
+        # unweighted_unifrac_neighbors -> unweighted_unifrac
+        neigh = {splitext(basename(f))[0].rsplit('_', 1)[0]: pre(f)
                  for f in glob.glob(d('beta/*.tsv'))
                  if f.endswith('neighbors.tsv')}
 
@@ -99,8 +102,8 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
         print(f"mkdir -p {copy_prefix}")
 
     for src, dst in rewritter.srcdst:
-        dst = os.path.join(copy_prefix, dst)
-        dst_dir = os.path.dirname(dst)
+        dst = join(copy_prefix, dst)
+        dst_dir = dirname(dst)
         if actually_copy:
             print(src, dst)
             pathlib.Path(dst_dir).mkdir(parents=True, exist_ok=True)
