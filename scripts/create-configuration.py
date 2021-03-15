@@ -61,9 +61,9 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
 
         # naively limit to unweighted and all samples right now as we're
         # not doing anything with the other data yet
-        beta = {os.path.splitext(os.path.basename(f))[0]: pre(f)
-                for f in glob.glob(d('beta/*.qza'))
-                if f.endswith('unweighted_unifrac.qza')}
+        #beta = {os.path.splitext(os.path.basename(f))[0]: pre(f)
+        #        for f in glob.glob(d('beta/*.qza'))
+        #        if f.endswith('unweighted_unifrac.qza')}
         pcoa = {os.path.splitext(os.path.basename(f))[0]: pre(f)
                 for f in glob.glob(d('beta/pcoa/*.qza'))
                 if f.endswith('unweighted_unifrac.qza')}
