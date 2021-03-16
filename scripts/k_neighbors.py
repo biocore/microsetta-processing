@@ -72,11 +72,11 @@ def get_neighbors(dm, k, mask_study_id=None):
         the frame is valued by those similar sample IDs
     """
     ids = dm.ids[:]
-    retain = lambda i: True
+    retain = lambda i: True  # noqa
 
     if mask_study_id is not None:
         ids = [i for i in ids if i.split('.', 1)[0] == mask_study_id]
-        retain = lambda i: i.split('.', 1)[0] != mask_study_id
+        retain = lambda i: i.split('.', 1)[0] != mask_study_id  # noqa
 
     results = []
     for sample_id in ids:
