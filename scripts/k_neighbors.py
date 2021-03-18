@@ -121,6 +121,10 @@ def neighbors(distance_matrix, output, mask_study_id, k):
         non_mask = [i for i in dm.ids if not i.startswith(mask_study_id)]
         k = min(len(non_mask), k + 1) - 1
 
+        # ... dont do anything fancy if its all the same study anyway
+        if len(non_mask) == len(dm.ids):
+            mask_study_id = None
+
     kn = get_neighbors(dm, k, mask_study_id)
     kn.to_csv(output, sep='\t', index=True, header=True)
 

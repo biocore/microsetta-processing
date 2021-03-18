@@ -15,7 +15,8 @@ qiime diversity beta-phylogenetic \
 python k_neighbors.py neighbors \
     --distance-matrix ${d}/beta/unweighted_unifrac.qza \
     --output ${d}/beta/unweighted_unifrac_neighbors.tsv \
-    --k 100
+    --k 100 \
+    --mask-study-id 10317
 
 if [[ ! -z "${TMI_WEIGHTED_UNIFRAC}" ]]; then
     qiime diversity beta-phylogenetic \
@@ -29,5 +30,6 @@ if [[ ! -z "${TMI_WEIGHTED_UNIFRAC}" ]]; then
     python k_neighbors.py neighbors \
         --distance-matrix ${d}/beta/weighted_unifrac.qza \
         --output ${d}/beta/weighted_unifrac_neighbors.tsv \
-        --k 100
+        --k 100 \
+        --mask-study-id 10317
 fi
