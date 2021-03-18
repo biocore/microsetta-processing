@@ -44,6 +44,15 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
         detail = json.loads(open(detail_fp).read())
         name = detail.pop('name')
 
+        datatag = name.split('-')[0]
+        sampletype = name.split('-')[-1]
+
+        # we'll only keep taxonomy data for TMI subsets
+        # as this entity requires a lot of resident memory for the api
+        keep_tax = False
+        if datatag == 'tmi' and sampletype in ('gut', 'skin', 'oral'):
+            keep_tax = True
+
         results_dir = dirname(detail_fp)
         d = functools.partial(join, results_dir)
         pre = functools.partial(rewritter.replace_prefix, base, prefix)
@@ -55,11 +64,12 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
                 break
 
         metadata = pre(d('raw.columns_of_interest.txt'))
-        taxtable = pre(d(f'raw.{bloom}minfeat.mindepth.biom.qza'))
-        taxtax = pre(d(f'raw.{bloom}minfeat.mindepth.taxonomy.qza'))
         alpha = {splitext(basename(f))[0]: pre(f)
                  for f in glob.glob(d('alpha/*.qza'))}
 
+        if keep_tax:
+            taxtable = pre(d(f'raw.{bloom}minfeat.mindepth.biom.qza'))
+            taxtax = pre(d(f'raw.{bloom}minfeat.mindepth.taxonomy.qza'))
         # naively limit to unweighted and all samples right now as we're
         # not doing anything with the other data yet
         # beta = {splitext(basename(f))[0]: pre(f)
@@ -77,11 +87,6 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
         datasets[name] = {
             '__dataset_detail__': detail,
             '__metadata__': metadata,
-            '__taxonomy__': {'taxonomy': {
-                'table': taxtable,
-                'feature-data-taxonomy': taxtax
-                }
-            },
             '__alpha__': alpha,
             # '__beta__': beta,
             '__neighbors__': neigh,
@@ -89,6 +94,14 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
                 'full-dataset': pcoa
                 }
             }
+
+        if keep_tax:
+            datasets[name]['__taxonomy__'] = {
+                'taxonomy': {
+                'table': taxtable,
+                'feature-data-taxonomy': taxtax
+                }
+            },
 
     final = {'resources': {'datasets': datasets},
              'port': str(port)}
