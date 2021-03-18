@@ -98,8 +98,8 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
         if keep_tax:
             datasets[name]['__taxonomy__'] = {
                 'taxonomy': {
-                'table': taxtable,
-                'feature-data-taxonomy': taxtax
+                    'table': taxtable,
+                    'feature-data-taxonomy': taxtax
                 }
             },
 
