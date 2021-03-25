@@ -105,6 +105,9 @@ def cli():
     pass
 
 
+def _min_k(items, k):
+    return min(len(items), k + 1) - 1
+
 @cli.command()
 @click.option('--distance-matrix', type=click.Path(exists=True), required=True,
               help='The Q2 distance matrix to operate on')
@@ -114,17 +117,16 @@ def cli():
 @click.option('--k', type=int, required=True, help='The number of neighbors')
 def neighbors(distance_matrix, output, mask_study_id, k):
     dm = qiime2.Artifact.load(distance_matrix).view(DistanceMatrix)
+    k = _min_k(dm.ids, k)
 
-    if mask_study_id is None:
-        k = min(len(dm.ids), k + 1) - 1  # account for len(dm) == k
-    else:
+    if mask_study_id is not None:
         focus = [i for i in dm.ids if i.startswith(mask_study_id)]
         # ... dont do anything fancy if its all the same study anyway
         if len(focus) == len(dm.ids):
             mask_study_id = None
         else:
             non_mask = [i for i in dm.ids if not i.startswith(mask_study_id)]
-            k = min(len(non_mask), k + 1) - 1
+            k = _min_k(non_mask, k)
 
     kn = get_neighbors(dm, k, mask_study_id)
     kn.to_csv(output, sep='\t', index=True, header=True)
