@@ -118,12 +118,13 @@ def neighbors(distance_matrix, output, mask_study_id, k):
     if mask_study_id is None:
         k = min(len(dm.ids), k + 1) - 1  # account for len(dm) == k
     else:
-        non_mask = [i for i in dm.ids if not i.startswith(mask_study_id)]
-        k = min(len(non_mask), k + 1) - 1
-
+        focus = [i for i in dm.ids if i.startswith(mask_study_id)]
         # ... dont do anything fancy if its all the same study anyway
-        if len(non_mask) == len(dm.ids):
+        if len(focus) == len(dm.ids):
             mask_study_id = None
+        else:
+            non_mask = [i for i in dm.ids if not i.startswith(mask_study_id)]
+            k = min(len(non_mask), k + 1) - 1
 
     kn = get_neighbors(dm, k, mask_study_id)
     kn.to_csv(output, sep='\t', index=True, header=True)

@@ -57,6 +57,11 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
         d = functools.partial(join, results_dir)
         pre = functools.partial(rewritter.replace_prefix, base, prefix)
 
+        # sanity check for completion
+        if not os.path.exists(d('beta/pcoa/unweighted_unifrac.qza')):
+            click.echo(f"No PCoA: {name}", err=True)
+            continue
+
         bloom = ''
         for f in os.listdir(results_dir):
             if 'nobloom' in f:
@@ -101,7 +106,7 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
                     'table': taxtable,
                     'feature-data-taxonomy': taxtax
                 }
-            },
+            }
 
     final = {'resources': {'datasets': datasets},
              'port': str(port)}
@@ -111,6 +116,7 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
 
     if actually_copy:
         pathlib.Path(copy_prefix).mkdir(parents=True, exist_ok=True)
+        shutil.copy(output, copy_prefix)
     else:
         print(f"mkdir -p {copy_prefix}")
 

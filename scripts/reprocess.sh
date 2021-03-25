@@ -7,7 +7,7 @@ cd "$(dirname "$0")"
 
 STUDY_TMI=10317
 STUDY_HADZA=11358
-STUDY_META_16S_FECAL=${HADZA}.850.2024.11937.11993.10581.10352.10249
+STUDY_META_16S_FECAL=${STUDY_HADZA}.850.2024.11937.11993.10581.10352.10249
 STUDY_META_16S_MIXED=2136.10052.10333.11724.11874.1189.1774.550
 STUDY_BUILTENV=10333.10423
 STUDY_VERTEBRATES=11166
@@ -71,7 +71,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta WGS fecal samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_WGS}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 
 export TMI_DATATYPE=$TYPE_WGS
 export ENV_PACKAGE=$HUMAN_SKIN
@@ -95,7 +95,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta WGS all samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_WGS}-${SAMPLETYPE_ALL}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 
 export TMI_DATATYPE=$TYPE_WGS
 export ENV_PACKAGE=$HUMAN_GUT
@@ -112,28 +112,31 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S skin samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_16S}-${SAMPLETYPE_SKIN}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 
+export TMI_DATATYPE=$TYPE_16S
 export ENV_PACKAGE=$HUMAN_ORAL
 export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S oral samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_16S}-${SAMPLETYPE_ORAL}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 
+export TMI_DATATYPE=$TYPE_16S
 export ENV_PACKAGE=$HUMAN_GUT
 export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S fecal samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_16S}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 
+export TMI_DATATYPE=$TYPE_16S
 export ENV_PACKAGE=$HUMAN_MIXED
 export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S all samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_16S}-${SAMPLETYPE_ALL}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 
 # Multipop gut 16S
 export TMI_DATATYPE=$TYPE_16S
@@ -142,13 +145,13 @@ export STUDIES=${STUDY_TMI}.${STUDY_META_16S_FECAL}
 export TMI_TITLE="Meta-analysis 16S fecal samples"
 export TMI_NAME=${DATASET_MULTIPOP}-${TYPE_16S}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 
 export TMI_DATATYPE=$TYPE_16S
 export ENV_PACKAGE=$HUMAN_GUT
 export STUDIES=$STUDY_HADZA
 export TMI_TITLE="Hadza 16S fecal samples"
-export TMI_NAME=${DATASET_HADZA}-${TYPE_WGS}-${SAMPLETYPE_GUT}
+export TMI_NAME=${DATASET_HADZA}-${TYPE_16S}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
 jobs+=($(sh submit_all.sh))
 
@@ -159,7 +162,7 @@ export STUDIES=${STUDY_TMI}.${STUDY_VERTEBRATES}
 export TMI_TITLE="Meta-analysis 16S vertebrate fecal"
 export TMI_NAME=${DATASET_VERTERATES}-${TYPE_16S}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
-jobs+=($(sh submit_all.sh))
+#jobs+=($(sh submit_all.sh))
 
 # Built environment
 export TMI_DATATYPE=$TYPE_16S

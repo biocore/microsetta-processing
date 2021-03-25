@@ -2,33 +2,36 @@
 
 set -e
 
+# https://stackoverflow.com/a/2990533/19741
+echoerr() { echo "$@" 1>&2; }
+
 if [[ -z ${TMI_NAME} ]];
 then
-    echo "No name set!"
+    echoerr "No name set!"
     exit 1
 fi
 
 if [[ -z ${TMI_TITLE} ]];
 then
-    echo "No title set!"
+    echoerr "No title set!"
     exit 1
 fi
 
 if [[ -z ${TMI_DATATYPE} ]];
 then
-    echo "No data set!"
+    echoerr "No data set!"
     exit 1
 fi
 
 if [[ -z ${ENV_PACKAGE} ]];
 then
-    echo "No package set!"
+    echoerr "No package set!"
     exit 1
 fi
 
 if [[ -z ${STUDIES} ]];
 then
-    echo "No studies set!"
+    echoerr "No studies set!"
     exit 1
 fi
 
@@ -77,16 +80,18 @@ s05a=$(echo "cd ${cwd}; bash 05a.rarefy.sh" | ${qsub} -W depend=afterok:${s04b} 
 s05b=$(echo "cd ${cwd}; bash 05b.alpha.sh" | ${qsub} -W depend=afterok:${s05a} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N ${TMI_NAME}-05b)
 s05c=$(echo "cd ${cwd}; bash 05c.beta.sh" | ${qsub} -W depend=afterok:${s05a} -l nodes=1:ppn=8 -l mem=24g -l walltime=16:00:00 ${qsub_common} -N ${TMI_NAME}-05c)
 
-if [[ ${ENV_PACKAGE} == *"built environment"* ]];
+if [[ ${ENV_PACKAGE} == *"built|environment"* ]];
 then
     # as of 3.18.21, q2-taxa collapse was performing a conversion to a dense
     # representation, making a taxa collapse impossible for broad collections
     # with environmental sets of samples
-    echo "${TMI_NAME}: not performing taxonomy collapse"
+    echoerr "${TMI_NAME}: not performing taxonomy collapse"
+    s06_dep=${s05c}
 else
     s05d=$(echo "cd ${cwd}; bash 05d.collapse-taxa.sh" | ${qsub} -W depend=afterok:${s04a}:${s04b} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N ${TMI_NAME}-05d)
+    s06_dep="${s05c}:${s05d}"
 fi
-s06=$(echo "cd ${cwd}; bash 06.subsets-interest.sh" | ${qsub} -W depend=afterok:${s05c}:${s05d} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N ${TMI_NAME}-06)
+s06=$(echo "cd ${cwd}; bash 06.subsets-interest.sh" | ${qsub} -W depend=afterok:${s06_dep} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N ${TMI_NAME}-06)
 s07a=$(echo "cd ${cwd}; bash 07a.pcoa.sh" | ${qsub} -W depend=afterok:${s06} -l nodes=1:ppn=1 -l mem=16g -l walltime=2:00:00 ${qsub_common} -N ${TMI_NAME}-07a)
 
 # emit the final job
