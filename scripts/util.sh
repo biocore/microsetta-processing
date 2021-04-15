@@ -3,6 +3,9 @@
 set -x
 set -e
 
+# unmunge spaces that are present in some env names
+export ENV_PACKAGE=$(echo ${ENV_PACKAGE} | tr "|" " ")
+
 if [[ -z ${QIIME_VERSION} ]]; then
     QIIME_VERSION=2020.11
 fi
@@ -101,7 +104,8 @@ function tag () {
 
 function base () {
     if [ -z "${AG_DEBUG}" ]; then
-        echo "../results/current/${ENV_PACKAGE}"
+        normalized=${ENV_PACKAGE// /_}
+        echo "../results/current/${normalized}"
     else
         mkdir -p ../current-debug
         echo "../current-debug"

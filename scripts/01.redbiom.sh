@@ -5,7 +5,7 @@ source ./util.sh
 python metadata_operations.py dataset-details --output ${d}/detail.json
 
 study_list=$(create_redbiom_contains ${STUDIES})
-env_list=$(create_redbiom_contains ${ENV_PACKAGE})
+env_list=$(create_redbiom_contains "${ENV_PACKAGE}")
 
 if [ -z "${AG_DEBUG}" ]; then
     redbiom search metadata \
@@ -28,3 +28,4 @@ redbiom fetch sample-metadata \
     --all-columns \
     --resolve-ambiguities \
     --from ${d}/$(tag).ids
+

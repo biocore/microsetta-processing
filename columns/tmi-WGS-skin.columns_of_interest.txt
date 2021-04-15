@@ -22,7 +22,7 @@ cosmetics_frequency
 country
 country_residence
 diabetes
-diet
+diet_type
 drinking_water_source
 drinks_per_session
 exercise_frequency

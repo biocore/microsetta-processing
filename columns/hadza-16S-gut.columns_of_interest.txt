@@ -1,0 +1,4 @@
+host_age
+host_life_stage
+seasonality
+title

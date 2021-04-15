@@ -24,6 +24,13 @@ python metadata_operations.py columns-of-interest \
     --columns ${columns_of_interest} \
     --output ${d}/$(tag).columns_of_interest.txt
 
+if [[ -f "../columns/${TMI_NAME}.microbial_map.json" ]];
+then
+    python metadata_operations.py microbial-map \
+        --input-output raw.columns_of_interest.txt \
+        --normalization ../columns/${TMI_NAME}.microbial_map.json
+fi
+
 if [[ ! -z "${TMI_SINGLE_SUBJECT}" ]]; then
     python metadata_operations.py single-subject \
         --table ${d}/$(tag_even).biom.qza \

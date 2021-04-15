@@ -236,5 +236,105 @@ def dataset_details(output):
         fp.write(json.dumps(obj, indent=2))
 
 
+def _remap_if_needed(df, remap, default):
+    new_values = [None] * len(df)
+    values = []
+    for grp in remap:
+        for col, mapping in grp.items():
+            values.append(df[col].apply(lambda x: mapping.get(x)))
+
+    values = pd.DataFrame(values)
+    for i, c in enumerate(values.columns):
+        sample = values[c]
+        nonnull_idx = sample.first_valid_index()
+        if nonnull_idx is not None:
+            new_values[i] = sample.loc[nonnull_idx]
+    new_values = pd.Series(new_values, index=df.index)
+    new_values.fillna(default, inplace=True)
+    return new_values
+
+
+def _age_to_lifestage(df, mappings, default):
+    norm_age = mappings['qiita_study_id']
+    stages = mappings['lifestage']
+
+    cols = {'qiita_study_id', }
+    ages = set()
+    for grp in norm_age.values():
+        age, units = grp
+        if age is None:
+            continue
+
+        ages.add(age)
+        cols.add(age)
+        if units is not None and units not in ('YEARS', 'DAYS', 'WEEKS'):
+            cols.add(units)
+
+    subset = df[list(cols)].copy()
+    for c in ages:
+        subset[c] = pd.to_numeric(subset[c], errors='coerce')
+
+    def f(row):
+        qid = row['qiita_study_id']
+
+        age, units = norm_age.get(qid, (None, None))
+        if age is None:
+            # this is super dirty. 10352 has life_stage, uncontrolled
+            # and lacks age, so for the moment. so if "age" is None,
+            # we interpret "units" as the life stage.
+            return units
+
+        if units == 'DAYS':
+            units = 'days'
+        elif units == 'YEARS':
+            units = 'years'
+        elif units == 'WEEKS':
+            units = 'weeks'
+        else:
+            units = row[units]
+
+        age = row[age]
+        if units == 'days':
+            age = age / 365
+        elif units == 'weeks':
+            age = age / 52
+
+        stage = default
+        for label, (low, high) in stages.items():
+            if low <= age < high:
+                stage = label
+                break
+
+        return stage
+
+    new_values = subset.apply(f, axis=1)
+    new_values.fillna(default, inplace=True)
+    return new_values
+
+
+@cli.command(name="microbial-map")
+@click.option('--input-output', type=click.Path(exists=True), required=True)
+@click.option('--normalization', type=click.Path(exists=True), required=True)
+def microbial_map(input_output, normalization):
+    norm_details = json.loads(open(normalization).read())
+    df = pd.read_csv(input_output, sep='\t', dtype=str).set_index('#SampleID')
+
+    for norm_detail in norm_details:
+        plotting_category = norm_detail['plotting_category']
+        norm = norm_detail['normalization']
+        default = norm['default']
+
+        if 'remap_if_needed' in norm:
+            new_values = _remap_if_needed(df, norm['remap_if_needed'], default)
+        elif 'age_to_lifestage' in norm:
+            new_values = _age_to_lifestage(df, norm['age_to_lifestage'],
+                                           default)
+        else:
+            raise KeyError("Unknown norm: %s" % str(norm))
+
+        df[plotting_category] = new_values
+    df.to_csv(input_output, sep='\t', index=True, header=True)
+
+
 if __name__ == '__main__':
     cli()
