@@ -108,6 +108,7 @@ def cli():
 def _min_k(items, k):
     return min(len(items), k + 1) - 1
 
+
 @cli.command()
 @click.option('--distance-matrix', type=click.Path(exists=True), required=True,
               help='The Q2 distance matrix to operate on')
