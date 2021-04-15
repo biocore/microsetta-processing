@@ -40,6 +40,7 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
     rewritter = Rewritter()
 
     datasets = {}
+    die = False
     for detail_fp in detail_files:
         detail = json.loads(open(detail_fp).read())
         name = detail.pop('name')
@@ -60,6 +61,7 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
         # sanity check for completion
         if not os.path.exists(d('beta/pcoa/unweighted_unifrac.qza')):
             click.echo(f"No PCoA: {name}", err=True)
+            die = True
             continue
 
         bloom = ''
@@ -110,6 +112,10 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
 
     final = {'resources': {'datasets': datasets},
              'port': str(port)}
+
+    if die:
+        import sys
+        sys.exit(1)
 
     with open(output, 'w') as fp:
         fp.write(json.dumps(final, indent=2))

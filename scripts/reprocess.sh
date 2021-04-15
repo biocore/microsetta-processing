@@ -7,8 +7,8 @@ cd "$(dirname "$0")"
 
 STUDY_TMI=10317
 STUDY_HADZA=11358
-STUDY_META_16S_FECAL=${STUDY_HADZA}.850.2024.11937.11993.10581.10352.10249
-STUDY_META_16S_MIXED=2136.10052.10333.11724.11874.1189.1774.550
+STUDY_MULTIPOP_16S_FECAL=${STUDY_HADZA}.850.2024.11993.10581.10352.11757.1481.12015.10052.1448.1718.10217.11210.10581
+STUDY_LIFESTAGE_16S_FECAL=850.10297.10080.10300.12524.11076.11882.11884.12496.1454.10249.11937
 STUDY_BUILTENV=10333.10423
 STUDY_VERTEBRATES=11166
 
@@ -22,6 +22,7 @@ SAMPLETYPE_ALL=allsamples
 DATASET_TMI=tmi
 DATASET_HADZA=hadza
 DATASET_MULTIPOP=multipop
+DATASET_LIFESTAGE=lifestage
 DATASET_BUILTENV=builtenv
 DATASET_VERTERATES=vertebrates
 
@@ -141,9 +142,17 @@ jobs+=($(sh submit_all.sh))
 # Multipop gut 16S
 export TMI_DATATYPE=$TYPE_16S
 export ENV_PACKAGE=$HUMAN_GUT
-export STUDIES=${STUDY_TMI}.${STUDY_META_16S_FECAL}
+export STUDIES=${STUDY_TMI}.${STUDY_MULTIPOP_16S_FECAL}
 export TMI_TITLE="Meta-analysis 16S fecal samples"
 export TMI_NAME=${DATASET_MULTIPOP}-${TYPE_16S}-${SAMPLETYPE_GUT}
+echo $TMI_NAME
+jobs+=($(sh submit_all.sh))
+
+export TMI_DATATYPE=$TYPE_16S
+export ENV_PACKAGE=$HUMAN_GUT
+export STUDIES=${STUDY_TMI}.${STUDY_LIFESTAGE_16S_FECAL}
+export TMI_TITLE="Meta-analysis 16S lifestage fecal samples"
+export TMI_NAME=${DATASET_LIFESTAGE}-${TYPE_16S}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
 jobs+=($(sh submit_all.sh))
 
@@ -174,4 +183,4 @@ echo $TMI_NAME
 jobs+=($(sh submit_all.sh))
 
 dependency=$(join_by : ${jobs[@]})
-echo "cd $(pwd); bash 08.cleanup.sh" | qsub -W depend=afterok:${dependency} -l nodes=1:ppn=1 -l mem=1g -l walltime=1:00:00 -N TMI-cleanup
+echo "cd $(pwd); bash 08.cleanup.sh" | qsub -W depend=afterok:${dependency} -v DATETAG=$datetag -l nodes=1:ppn=1 -l mem=1g -l walltime=1:00:00 -N TMI-cleanup
