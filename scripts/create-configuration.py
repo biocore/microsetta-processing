@@ -110,7 +110,8 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
                 }
             }
 
-    final = {'resources': {'datasets': datasets},
+    final = {'validate': False,  # disable route checking for pngs
+             'resources': {'datasets': datasets},
              'port': str(port)}
 
     if die:
