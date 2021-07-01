@@ -1,0 +1,31 @@
+[    
+    {"plotting_category": "microbial_map_lifestage",
+     "normalization": {"default": "NA",
+                       "age_to_lifestage": {
+                           "qiita_study_id": {
+                               "10249": ["day_of_life", "DAYS"], 
+                               "10317": ["age_years", "YEARS"], 
+                               "10352": [null, "Adult"], 
+                               "11358": ["host_age", "age_units"], 
+                               "11937": ["host_age", "host_age_units"],
+                               "850": ["age", "host_age_units"],
+                               "10297": ["week", "WEEKS"],
+                               "10080": ["age", "host_age_units"],
+                               "10300": ["day", "DAYS"],
+                               "11076": ["host_age", "host_age_units"],
+                               "11882": ["host_age", "host_age_units"],
+                               "11884": ["host_age", "host_age_units"],
+                               "12496": ["host_age", "host_age_units"],
+                               "1454": ["host_age", "host_age_units"]
+                           },
+                           "lifestage": {"Infant": [0, 3],
+                                         "Child": [3, 13],
+                                         "Teen": [13, 20],
+                                         "Adult": [20, 70],
+                                         "Elderly": [70, 999]
+                                        }
+                           }
+                      }
+    }
+]
+

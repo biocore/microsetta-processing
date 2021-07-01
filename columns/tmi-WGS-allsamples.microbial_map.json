@@ -1,0 +1,16 @@
+[
+    {"plotting_category": "microbial_map",
+     "normalization": {"default": "Other",
+                       "remap_if_needed": [{"body_site": {"UBERON:feces": "Stool",
+                                                          "UBERON:nostril": "Skin",
+                                                          "UBERON:skin of axilla": "Skin",
+                                                          "UBERON:skin of hand": "Skin",
+                                                          "UBERON:skin of head": "Skin",
+                                                          "UBERON:skin of leg": "Skin",
+                                                          "UBERON:skin of trunk": "Skin",
+                                                          "UBERON:tongue": "Mouth"
+                                                         }
+                                           }]
+                       }
+    }
+]

@@ -1,0 +1,12 @@
+[
+    {"plotting_category": "microbial_map",
+     "normalization": {"default": "Other",
+                       "remap_if_needed": [{"env_package": {"human-gut": "Stool",
+                                                            "human-skin": "Skin",
+                                                            "human-oral": "Oral"
+                                                            }},
+                                           {"qiita_study_id": {"10423": "Office surface"}}
+                                           ]
+                       }
+    }
+]
