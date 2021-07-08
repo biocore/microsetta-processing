@@ -27,7 +27,7 @@ python metadata_operations.py columns-of-interest \
 if [[ -f "../columns/${TMI_NAME}.microbial_map.json" ]];
 then
     python metadata_operations.py microbial-map \
-        --input-output raw.columns_of_interest.txt \
+        --input-output ${d}/$(tag).columns_of_interest.txt \
         --normalization ../columns/${TMI_NAME}.microbial_map.json
 fi
 

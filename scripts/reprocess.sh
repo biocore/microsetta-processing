@@ -58,6 +58,8 @@ mkdir -p ${datetag}/${BUILTENV_HUMAN_MIXED// /_}
 mkdir -p ${datetag}/${HOST_GUT}
 popd
 
+export QIIME_VERSION=2021.2
+
 # join strings in an array, see 
 # https://stackoverflow.com/a/17841619
 function join_by { local IFS="$1"; shift; echo "$*"; }

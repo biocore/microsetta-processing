@@ -80,7 +80,7 @@ s05a=$(echo "cd ${cwd}; bash 05a.rarefy.sh" | ${qsub} -W depend=afterok:${s04b} 
 s05b=$(echo "cd ${cwd}; bash 05b.alpha.sh" | ${qsub} -W depend=afterok:${s05a} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N ${TMI_NAME}-05b)
 s05c=$(echo "cd ${cwd}; bash 05c.beta.sh" | ${qsub} -W depend=afterok:${s05a} -l nodes=1:ppn=8 -l mem=24g -l walltime=16:00:00 ${qsub_common} -N ${TMI_NAME}-05c)
 
-if [[ ${ENV_PACKAGE} == *"built|environment"* ]];
+if [[ ${ENV_PACKAGE} == *"built|environment"* || ${TMI_NAME} == *"lifestage"* ]];
 then
     # as of 3.18.21, q2-taxa collapse was performing a conversion to a dense
     # representation, making a taxa collapse impossible for broad collections
