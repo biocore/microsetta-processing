@@ -42,43 +42,46 @@ logdir=${logbase}/${datetag}-${TMI_NAME}
 mkdir -p ${logdir}
 
 ENV_PACKAGE=$(echo ${ENV_PACKAGE} | tr " " "|")
-qsub_vars="-v ENV_PACKAGE=${ENV_PACKAGE}"
-qsub_vars=${qsub_vars},TMI_DATATYPE=${TMI_DATATYPE}
-qsub_vars=${qsub_vars},STUDIES=${STUDIES}
-qsub_vars=${qsub_vars},TMI_NAME=${TMI_NAME}
-qsub_vars=${qsub_vars},TMI_TITLE=$(echo ${TMI_TITLE} | tr " " ".")
-qsub_common="-o ${logdir} -e ${logdir} ${qsub_vars}"
+sbatch_vars="--export=ENV_PACKAGE=${ENV_PACKAGE}"
+sbatch_vars=${sbatch_vars},TMI_DATATYPE=${TMI_DATATYPE}
+sbatch_vars=${sbatch_vars},STUDIES=${STUDIES}
+sbatch_vars=${sbatch_vars},TMI_NAME=${TMI_NAME}
+sbatch_vars=${sbatch_vars},TMI_TITLE=$(echo ${TMI_TITLE} | tr " " ".")
+sbatch_vars=${sbatch_vars},QIIME_VERSION=${QIIME_VERSION}
+sbatch_common="--kill-on-invalid-dep=yes --parsable --output ${logdir}/%x.%j.out --error ${logdir}/%x.%j.err ${sbatch_vars}"
 
 if [[ ! -z ${EMAIL} ]];
 then
-    qsub_common="${qsub_common} -M ${EMAIL} -m ae"
+    sbatch_common="${sbatch_common} --mail-user ${EMAIL} --mail-type FAIL,INVALID_DEPEND,TIME_LIMIT_90"
 fi
 
-qsub=qsub
-if [[ ! $(command -v qsub) ]]; 
+sbatch=sbatch
+if [[ ! $(command -v sbatch) ]]; 
 then
-    qsub=$(pwd)/qsub-capture.sh
+    sbatch=$(pwd)/sbatch-capture.sh
 fi
 
 cwd=$(pwd)
-s01=$(echo "cd ${cwd}; bash 01.redbiom.sh" | ${qsub} -l nodes=1:ppn=1 -l mem=16g -l walltime=8:00:00 ${qsub_common} -N ${TMI_NAME}-01)
-s02=$(echo "cd ${cwd}; bash 02.imports.sh" | ${qsub} -W depend=afterok:${s01} -l nodes=1:ppn=1 -l mem=16g -l walltime=2:00:00 ${qsub_common} -N ${TMI_NAME}-02)
-s03=$(echo "cd ${cwd}; bash 03.filtering.sh" | ${qsub} -W depend=afterok:${s02} -l nodes=1:ppn=1 -l mem=16g -l walltime=2:00:00 ${qsub_common} -N ${TMI_NAME}-03)
+set -x
+sbatch_script_common="#!/bin/bash\ncd ${cwd}\n"
+s01=$(echo -e "${sbatch_script_common} bash 01.redbiom.sh" | ${sbatch} -N 1 -c 1 --mem=16g --time=8:00:00 ${sbatch_common} -J ${TMI_NAME}-01)
+s02=$(echo -e "${sbatch_script_common} bash 02.imports.sh" | ${sbatch} --dependency=afterok:${s01} -N 1 -c 1 --mem=16g --time=2:00:00 ${sbatch_common} -J ${TMI_NAME}-02)
+s03=$(echo -e "${sbatch_script_common} bash 03.filtering.sh" | ${sbatch} --dependency=afterok:${s02} -N 1 -c 1 --mem=16g --time=2:00:00 ${sbatch_common} -J ${TMI_NAME}-03)
 
 if [[ ${TMI_DATATYPE} == "WGS" ]];
 then
     # taxonomy and phylogeny are "free" from the upstream woltka processing
     # so we do not need wide resources here
-    s04a=$(echo "cd ${cwd}; bash 04a.classify.sh" | ${qsub} -W depend=afterok:${s03} -l nodes=1:ppn=1 -l mem=8g -l walltime=1:00:00 ${qsub_common} -N ${TMI_NAME}-04a)
-    s04b=$(echo "cd ${cwd}; bash 04b.phylogeny.sh" | ${qsub} -W depend=afterok:${s03} -l nodes=1:ppn=1 -l mem=8g -l walltime=1:00:00 ${qsub_common} -N ${TMI_NAME}-04b)
+    s04a=$(echo -e "${sbatch_script_common} bash 04a.classify.sh" | ${sbatch} --dependency=afterok:${s03} -N 1 -c 1 --mem=8g --time=1:00:00 ${sbatch_common} -J ${TMI_NAME}-04a)
+    s04b=$(echo -e "${sbatch_script_common} bash 04b.phylogeny.sh" | ${sbatch} --dependency=afterok:${s03} -N 1 -c 1 --mem=8g --time=1:00:00 ${sbatch_common} -J ${TMI_NAME}-04b)
 else
-    s04a=$(echo "cd ${cwd}; bash 04a.classify.sh" | ${qsub} -W depend=afterok:${s03} -l nodes=1:ppn=8 -l mem=64g -l walltime=8:00:00 ${qsub_common} -N ${TMI_NAME}-04a)
-    s04b=$(echo "cd ${cwd}; bash 04b.phylogeny.sh" | ${qsub} -W depend=afterok:${s03} -l nodes=1:ppn=24 -l mem=128g -l walltime=16:00:00 ${qsub_common} -N ${TMI_NAME}-04b)
+    s04a=$(echo -e "${sbatch_script_common} bash 04a.classify.sh" | ${sbatch} --dependency=afterok:${s03} -N 1 -c 8 --mem=64g --time=8:00:00 ${sbatch_common} -J ${TMI_NAME}-04a)
+    s04b=$(echo -e "${sbatch_script_common} bash 04b.phylogeny.sh" | ${sbatch} --dependency=afterok:${s03} -N 1 -c 24 --mem=128g --time=16:00:00 ${sbatch_common} -J ${TMI_NAME}-04b)
 fi
 
-s05a=$(echo "cd ${cwd}; bash 05a.rarefy.sh" | ${qsub} -W depend=afterok:${s04b} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N ${TMI_NAME}-05a)
-s05b=$(echo "cd ${cwd}; bash 05b.alpha.sh" | ${qsub} -W depend=afterok:${s05a} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N ${TMI_NAME}-05b)
-s05c=$(echo "cd ${cwd}; bash 05c.beta.sh" | ${qsub} -W depend=afterok:${s05a} -l nodes=1:ppn=8 -l mem=24g -l walltime=16:00:00 ${qsub_common} -N ${TMI_NAME}-05c)
+s05a=$(echo -e "${sbatch_script_common} bash 05a.rarefy.sh" | ${sbatch} --dependency=afterok:${s04b} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05a)
+s05b=$(echo -e "${sbatch_script_common} bash 05b.alpha.sh" | ${sbatch} --dependency=afterok:${s05a} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05b)
+s05c=$(echo -e "${sbatch_script_common} bash 05c.beta.sh" | ${sbatch} --dependency=afterok:${s05a} -N 1 -c 8 --mem=24g --time=16:00:00 ${sbatch_common} -J ${TMI_NAME}-05c)
 
 if [[ ${ENV_PACKAGE} == *"built|environment"* || ${TMI_NAME} == *"lifestage"* ]];
 then
@@ -88,11 +91,11 @@ then
     echoerr "${TMI_NAME}: not performing taxonomy collapse"
     s06_dep=${s05c}
 else
-    s05d=$(echo "cd ${cwd}; bash 05d.collapse-taxa.sh" | ${qsub} -W depend=afterok:${s04a}:${s04b} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N ${TMI_NAME}-05d)
+    s05d=$(echo -e "${sbatch_script_common} bash 05d.collapse-taxa.sh" | ${sbatch} --dependency=afterok:${s04a}:${s04b} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05d)
     s06_dep="${s05c}:${s05d}"
 fi
-s06=$(echo "cd ${cwd}; bash 06.subsets-interest.sh" | ${qsub} -W depend=afterok:${s06_dep} -l nodes=1:ppn=1 -l mem=16g -l walltime=4:00:00 ${qsub_common} -N ${TMI_NAME}-06)
-s07a=$(echo "cd ${cwd}; bash 07a.pcoa.sh" | ${qsub} -W depend=afterok:${s06} -l nodes=1:ppn=1 -l mem=16g -l walltime=2:00:00 ${qsub_common} -N ${TMI_NAME}-07a)
+s06=$(echo -e "${sbatch_script_common} bash 06.subsets-interest.sh" | ${sbatch} --dependency=afterok:${s06_dep} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-06)
+s07a=$(echo -e "${sbatch_script_common} bash 07a.pcoa.sh" | ${sbatch} --dependency=afterok:${s06} -N 1 -c 1 --mem=16g --time=2:00:00 ${sbatch_common} -J ${TMI_NAME}-07a)
 
 # emit the final job
 echo ${s07a}

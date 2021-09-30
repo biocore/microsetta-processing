@@ -58,7 +58,7 @@ mkdir -p ${datetag}/${BUILTENV_HUMAN_MIXED// /_}
 mkdir -p ${datetag}/${HOST_GUT}
 popd
 
-export QIIME_VERSION=2021.2
+export QIIME_VERSION=2021.8
 
 # join strings in an array, see 
 # https://stackoverflow.com/a/17841619
@@ -106,7 +106,7 @@ export STUDIES=$STUDY_HADZA
 export TMI_TITLE="Hadza WGS fecal samples"
 export TMI_NAME=${DATASET_HADZA}-${TYPE_WGS}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
-jobs+=($(sh submit_all.sh))
+###jobs+=($(sh submit_all.sh))
 
 # Microsetta 16S specific
 export TMI_DATATYPE=$TYPE_16S
@@ -115,7 +115,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S skin samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_16S}-${SAMPLETYPE_SKIN}
 echo $TMI_NAME
-jobs+=($(sh submit_all.sh))
+###jobs+=($(sh submit_all.sh))
 
 export TMI_DATATYPE=$TYPE_16S
 export ENV_PACKAGE=$HUMAN_ORAL
@@ -123,7 +123,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S oral samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_16S}-${SAMPLETYPE_ORAL}
 echo $TMI_NAME
-jobs+=($(sh submit_all.sh))
+###jobs+=($(sh submit_all.sh))
 
 export TMI_DATATYPE=$TYPE_16S
 export ENV_PACKAGE=$HUMAN_GUT
@@ -131,7 +131,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S fecal samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_16S}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
-jobs+=($(sh submit_all.sh))
+###jobs+=($(sh submit_all.sh))
 
 export TMI_DATATYPE=$TYPE_16S
 export ENV_PACKAGE=$HUMAN_MIXED
@@ -139,7 +139,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S all samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_16S}-${SAMPLETYPE_ALL}
 echo $TMI_NAME
-jobs+=($(sh submit_all.sh))
+###jobs+=($(sh submit_all.sh))
 
 # Multipop gut 16S
 export TMI_DATATYPE=$TYPE_16S
@@ -148,7 +148,7 @@ export STUDIES=${STUDY_TMI}.${STUDY_MULTIPOP_16S_FECAL}
 export TMI_TITLE="Meta-analysis 16S fecal samples"
 export TMI_NAME=${DATASET_MULTIPOP}-${TYPE_16S}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
-jobs+=($(sh submit_all.sh))
+###jobs+=($(sh submit_all.sh))
 
 export TMI_DATATYPE=$TYPE_16S
 export ENV_PACKAGE=$HUMAN_GUT
@@ -156,7 +156,7 @@ export STUDIES=${STUDY_TMI}.${STUDY_LIFESTAGE_16S_FECAL}
 export TMI_TITLE="Meta-analysis 16S lifestage fecal samples"
 export TMI_NAME=${DATASET_LIFESTAGE}-${TYPE_16S}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
-jobs+=($(sh submit_all.sh))
+###jobs+=($(sh submit_all.sh))
 
 export TMI_DATATYPE=$TYPE_16S
 export ENV_PACKAGE=$HUMAN_GUT
@@ -164,7 +164,7 @@ export STUDIES=$STUDY_HADZA
 export TMI_TITLE="Hadza 16S fecal samples"
 export TMI_NAME=${DATASET_HADZA}-${TYPE_16S}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
-jobs+=($(sh submit_all.sh))
+###jobs+=($(sh submit_all.sh))
 
 # non-human comparisons
 export TMI_DATATYPE=$TYPE_16S
@@ -182,7 +182,9 @@ export STUDIES=${STUDY_TMI}.${STUDY_BUILTENV}
 export TMI_TITLE="Meta-analysis 16S built environment and multi-bodysite samples"
 export TMI_NAME=${DATASET_BUILTENV}-${TYPE_16S}-${SAMPLETYPE_ALL}
 echo $TMI_NAME
-jobs+=($(sh submit_all.sh))
+###jobs+=($(sh submit_all.sh))
 
 dependency=$(join_by : ${jobs[@]})
-echo "cd $(pwd); bash 08.cleanup.sh" | qsub -W depend=afterok:${dependency} -v DATETAG=$datetag -l nodes=1:ppn=1 -l mem=1g -l walltime=1:00:00 -N TMI-cleanup
+cwd=$(pwd)
+sbatch_script_common="#!/bin/bash\ncd ${cwd}\n"
+echo -e "${sbatch_script_common} bash 08.cleanup.sh" | sbatch --dependency=afterok:${dependency} --export=DATETAG=${datetag} -N 1 -c 1 --mem=1g --time=1:00:00 --job-name TMI-cleanup
