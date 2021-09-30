@@ -50,6 +50,11 @@ sbatch_vars=${sbatch_vars},TMI_TITLE=$(echo ${TMI_TITLE} | tr " " ".")
 sbatch_vars=${sbatch_vars},QIIME_VERSION=${QIIME_VERSION}
 sbatch_common="--kill-on-invalid-dep=yes --parsable --output ${logdir}/%x.%j.out --error ${logdir}/%x.%j.err ${sbatch_vars}"
 
+if [[ -z ${EMAIL} && -f ~/.forward ]];
+then
+    EMAIL=$(head -n 1 ~/.forward)
+fi
+
 if [[ ! -z ${EMAIL} ]];
 then
     sbatch_common="${sbatch_common} --mail-user ${EMAIL} --mail-type FAIL,INVALID_DEPEND,TIME_LIMIT_90"
