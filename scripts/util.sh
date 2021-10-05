@@ -120,8 +120,8 @@ fi
 d="$(base)/${TMI_DATATYPE}/${STUDIES}"
 mkdir -p ${d}
 
-if [ -z "$PBS_NUM_PPN" ]; then
+if [ -z "$SLURM_CPUS_PER_TASK" ]; then
     nprocs=1
 else
-    nprocs=$PBS_NUM_PPN
+    nprocs=$SLURM_CPUS_PER_TASK
 fi
