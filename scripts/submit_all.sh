@@ -67,7 +67,6 @@ then
 fi
 
 cwd=$(pwd)
-set -x
 sbatch_script_common="#!/bin/bash\ncd ${cwd}\n"
 s01=$(echo -e "${sbatch_script_common} bash 01.redbiom.sh" | ${sbatch} -N 1 -c 1 --mem=16g --time=8:00:00 ${sbatch_common} -J ${TMI_NAME}-01)
 s02=$(echo -e "${sbatch_script_common} bash 02.imports.sh" | ${sbatch} --dependency=afterok:${s01} -N 1 -c 1 --mem=16g --time=2:00:00 ${sbatch_common} -J ${TMI_NAME}-02)
@@ -81,11 +80,11 @@ then
     s04b=$(echo -e "${sbatch_script_common} bash 04b.phylogeny.sh" | ${sbatch} --dependency=afterok:${s03} -N 1 -c 1 --mem=8g --time=1:00:00 ${sbatch_common} -J ${TMI_NAME}-04b)
 else
     s04a=$(echo -e "${sbatch_script_common} bash 04a.classify.sh" | ${sbatch} --dependency=afterok:${s03} -N 1 -c 8 --mem=64g --time=8:00:00 ${sbatch_common} -J ${TMI_NAME}-04a)
-    s04b=$(echo -e "${sbatch_script_common} bash 04b.phylogeny.sh" | ${sbatch} --dependency=afterok:${s03} -N 1 -c 24 --mem=128g --time=16:00:00 ${sbatch_common} -J ${TMI_NAME}-04b)
+    s04b=$(echo -e "${sbatch_script_common} bash 04b.phylogeny.sh" | ${sbatch} --dependency=afterok:${s03} -N 1 -c 24 --mem=128g --time=32:00:00 ${sbatch_common} -J ${TMI_NAME}-04b)
 fi
 
 s05a=$(echo -e "${sbatch_script_common} bash 05a.rarefy.sh" | ${sbatch} --dependency=afterok:${s04b} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05a)
-s05b=$(echo -e "${sbatch_script_common} bash 05b.alpha.sh" | ${sbatch} --dependency=afterok:${s05a} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05b)
+s05b=$(echo -e "${sbatch_script_common} bash 05b.alpha.sh" | ${sbatch} --dependency=afterok:${s05a} -N 1 -c 1 --mem=64g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05b)
 s05c=$(echo -e "${sbatch_script_common} bash 05c.beta.sh" | ${sbatch} --dependency=afterok:${s05a} -N 1 -c 8 --mem=24g --time=16:00:00 ${sbatch_common} -J ${TMI_NAME}-05c)
 
 if [[ ${ENV_PACKAGE} == *"built|environment"* || ${TMI_NAME} == *"lifestage"* ]];
@@ -94,13 +93,13 @@ then
     # representation, making a taxa collapse impossible for broad collections
     # with environmental sets of samples
     echoerr "${TMI_NAME}: not performing taxonomy collapse"
-    s06_dep=${s05c}
+    06_dep=${s05c}
 else
     s05d=$(echo -e "${sbatch_script_common} bash 05d.collapse-taxa.sh" | ${sbatch} --dependency=afterok:${s04a}:${s04b} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05d)
     s06_dep="${s05c}:${s05d}"
 fi
 s06=$(echo -e "${sbatch_script_common} bash 06.subsets-interest.sh" | ${sbatch} --dependency=afterok:${s06_dep} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-06)
-s07a=$(echo -e "${sbatch_script_common} bash 07a.pcoa.sh" | ${sbatch} --dependency=afterok:${s06} -N 1 -c 1 --mem=16g --time=2:00:00 ${sbatch_common} -J ${TMI_NAME}-07a)
+s07a=$(echo -e "${sbatch_script_common} bash 07a.pcoa.sh" | ${sbatch} --dependency=afterok:${s06} -N 1 -c 1 --mem=32g --time=2:00:00 ${sbatch_common} -J ${TMI_NAME}-07a)
 
 # emit the final job
 echo ${s07a}
