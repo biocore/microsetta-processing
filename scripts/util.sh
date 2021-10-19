@@ -11,6 +11,11 @@ if [[ -z ${QIIME_VERSION} ]]; then
 fi
 source activate qiime2-${QIIME_VERSION}
 
+if [[ -z ${PANFS} ]]; then
+    export TMPDIR=${PANFS}/tmp
+    mkdir -p ${TMPDIR}
+fi
+
 if [[ -z ${TMI_DATATYPE} ]];
 then
     echo "No data set!"
@@ -25,20 +30,21 @@ fi
 
 if [[ ${TMI_DATATYPE} == "WGS" ]];
 then
-    redbiom_ctx=Woltka-wol-072020-Woltka-pergenome-200b91-677a58
+    redbiom_ctx=Woltka-per-genome-WoLr1-422c8e
     trim_length=None
     min_feature_count=400  # .1% upper bound
-    min_sample_depth=400000
+    min_sample_depth=200000
     rarefaction_replacement="with"
     ambiguities="merge"
     hash_features="False"
 else
-    redbiom_ctx=Deblur-Illumina-16S-V4-100nt-fbc5b2
+    #redbiom_ctx=Deblur_2021.09-Illumina-16S-V4-90nt-dd6875
+    redbiom_ctx=Deblur_2021.09-Illumina-16S-V4-100nt-50b3a2
     trim_length=100
     min_feature_count=2
-    min_sample_depth=1000
+    min_sample_depth=800
     rarefaction_replacement="no-with"
-    ambiguities="most-reads"
+    ambiguities="merge"
     hash_features="True"
 fi
 
