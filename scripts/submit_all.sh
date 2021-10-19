@@ -93,7 +93,7 @@ then
     # representation, making a taxa collapse impossible for broad collections
     # with environmental sets of samples
     echoerr "${TMI_NAME}: not performing taxonomy collapse"
-    06_dep=${s05c}
+    s06_dep=${s05c}
 else
     s05d=$(echo -e "${sbatch_script_common} bash 05d.collapse-taxa.sh" | ${sbatch} --dependency=afterok:${s04a}:${s04b} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05d)
     s06_dep="${s05c}:${s05d}"
