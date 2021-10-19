@@ -267,8 +267,12 @@ def _age_to_lifestage(df, mappings, default):
 
         ages.add(age)
         cols.add(age)
-        if units is not None and units not in ('YEARS', 'DAYS', 'WEEKS'):
+        if units is not None and \
+                units not in ('YEARS', 'DAYS', 'WEEKS') and \
+                not units.startswith('NULLUSE'):
             cols.add(units)
+        if units is not None and units.startswith('NULLUSE'):
+            cols.add(units.split(':', 1)[1])
 
     subset = df[list(cols)].copy()
     for c in ages:
@@ -290,6 +294,9 @@ def _age_to_lifestage(df, mappings, default):
             units = 'years'
         elif units == 'WEEKS':
             units = 'weeks'
+        elif units.startswith('NULLUSE'):
+            col = units.split(':', 1)[1]
+            return row[col].capitalize()
         else:
             units = row[units]
 
