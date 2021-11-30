@@ -8,6 +8,11 @@ import pathlib
 import shutil
 
 
+@click.group()
+def cli():
+    pass
+
+
 class Rewritter:
     def __init__(self):
         self.srcdst = []
@@ -23,7 +28,19 @@ class Rewritter:
         return replaced
 
 
-@click.command()
+@cli.command()
+@click.option('--base', type=click.Path(exists=True),
+              help='The results base directory')
+def delete_unnecessary_files(base):
+    """Remove files we don't need to have persist"""
+    drop_files = glob.glob(join(base, '*/*/*/*.droplist'))
+    for fp in drop_files:
+        with open(fp) as openfp:
+            for f in openfp:
+                os.remove(f)
+
+
+@cli.command()
 @click.option('--base', type=click.Path(exists=True),
               help='The results base directory')
 @click.option('--output', type=click.Path(exists=False),
@@ -35,7 +52,8 @@ class Rewritter:
               help="Copy prefix to use when copying files to a dst")
 @click.option('--actually-copy', is_flag=True, default=False,
               help="If specified, actually copy the files")
-def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
+def create_configuration(base, output, port, prefix, copy_prefix,
+                         actually_copy):
     detail_files = glob.glob(join(base, '*/*/*/*.json'))
     rewritter = Rewritter()
 
@@ -140,4 +158,4 @@ def create_conf(base, output, port, prefix, copy_prefix, actually_copy):
 
 
 if __name__ == '__main__':
-    create_conf()
+    cli()
