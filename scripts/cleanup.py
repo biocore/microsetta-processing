@@ -88,7 +88,7 @@ def create_configuration(base, output, port, prefix, copy_prefix,
                 bloom = 'nobloom.'
                 break
 
-        metadata = pre(d('raw.columns_of_interest.txt'))
+        metadata = pre(d('metadata-by-status/All_good.tsv'))
         alpha = {splitext(basename(f))[0]: pre(f)
                  for f in glob.glob(d('alpha/*.qza'))}
 
