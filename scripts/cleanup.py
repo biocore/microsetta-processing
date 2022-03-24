@@ -37,7 +37,7 @@ def delete_unnecessary_files(base):
     for fp in drop_files:
         with open(fp) as openfp:
             for f in openfp:
-                os.remove(f)
+                os.remove(f.strip())
 
 
 @cli.command()
