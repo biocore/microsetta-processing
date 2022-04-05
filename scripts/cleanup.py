@@ -89,6 +89,14 @@ def create_configuration(base, output, port, prefix, copy_prefix,
                 break
 
         metadata = pre(d('metadata-by-status/All_good.tsv'))
+
+        for f in glob.glob(d('metadata-by-status/*.tsv')):
+            if f.endswith('All_good.tsv'):
+                continue
+
+            # copy other status files if they exist
+            pre(f)
+
         alpha = {splitext(basename(f))[0]: pre(f)
                  for f in glob.glob(d('alpha/*.qza'))}
 
