@@ -37,7 +37,7 @@ def delete_unnecessary_files(base):
     for fp in drop_files:
         with open(fp) as openfp:
             for f in openfp:
-                os.remove(f)
+                os.remove(f.strip())
 
 
 @cli.command()
@@ -88,7 +88,15 @@ def create_configuration(base, output, port, prefix, copy_prefix,
                 bloom = 'nobloom.'
                 break
 
-        metadata = pre(d('raw.columns_of_interest.txt'))
+        metadata = pre(d('metadata-by-status/All_good.tsv'))
+
+        for f in glob.glob(d('metadata-by-status/*.tsv')):
+            if f.endswith('All_good.tsv'):
+                continue
+
+            # copy other status files if they exist
+            pre(f)
+
         alpha = {splitext(basename(f))[0]: pre(f)
                  for f in glob.glob(d('alpha/*.qza'))}
 

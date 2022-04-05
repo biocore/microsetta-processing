@@ -58,7 +58,7 @@ mkdir -p ${datetag}/${BUILTENV_HUMAN_MIXED// /_}
 mkdir -p ${datetag}/${HOST_GUT}
 popd
 
-export QIIME_VERSION=2021.8
+export QIIME_VERSION=2022.2
 SUBMIT_DELAY=10
 
 # join strings in an array, see 

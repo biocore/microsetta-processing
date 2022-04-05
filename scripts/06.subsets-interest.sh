@@ -2,16 +2,6 @@
 
 source ./util.sh
 
-# NOTE: the input (--metadata) is updated inplace
-python metadata_operations.py sample-status \
-    --metadata ${d}/$(tag).txt \
-    --original-table ${d}/$(tag).biom.qza \
-    --no-bloom-table ${d}/$(tag_nobloom).biom.qza \
-    --no-singletons-table ${d}/$(tag_minfeat).biom.qza \
-    --min-count-table ${d}/$(tag_mindepth).biom.qza \
-    --only-inserted-table ${d}/$(tag_treeoverlap).biom.qza \
-    --rarefied-table ${d}/$(tag_even).biom.qza
-
 if [[ -f "../columns/${TMI_NAME}.columns_of_interest.txt" ]];
 then
     columns_of_interest=../columns/${TMI_NAME}.columns_of_interest.txt
@@ -58,3 +48,14 @@ if [[ ! -z "${TMI_SINGLE_SUBJECT}" ]]; then
             --o-filtered-distance-matrix ${d}/beta/${name}-single-subject-sample.qza
     done
 fi
+
+# NOTE: the input (--metadata) is updated inplace
+python metadata_operations.py sample-status \
+    --metadata ${d}/$(tag).columns_of_interest.txt \
+    --original-table ${d}/$(tag).biom.qza \
+    --no-bloom-table ${d}/$(tag_nobloom).biom.qza \
+    --no-singletons-table ${d}/$(tag_minfeat).biom.qza \
+    --min-count-table ${d}/$(tag_mindepth).biom.qza \
+    --only-inserted-table ${d}/$(tag_treeoverlap).biom.qza \
+    --rarefied-table ${d}/$(tag_even).biom.qza
+

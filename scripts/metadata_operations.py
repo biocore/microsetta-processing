@@ -5,6 +5,7 @@ import biom
 import numpy as np
 import os
 import json
+import pathlib
 
 
 def _table_and_ids(qza):
@@ -200,6 +201,15 @@ def sample_status(metadata, original_table, no_bloom_table,
     md.loc[lost_from_rarefaction, category] = 'Too few sequences after rarefaction'  # noqa
 
     md.to_csv(metadata, sep='\t', index=True, header=True)
+
+    path = os.path.dirname(metadata)
+    pathlib.Path(f"{path}/metadata-by-status").mkdir(parents=True,
+                                                     exist_ok=True)
+    for name, grp in md.groupby('processing-status'):
+        if len(grp) > 0:
+            name = name.replace(' ', '_')
+            grp.to_csv(f"{path}/metadata-by-status/{name}.tsv", sep='\t',
+                       index=True, header=True)
 
 
 @cli.command(name='dataset-details')
