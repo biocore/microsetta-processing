@@ -84,7 +84,7 @@ else
 fi
 
 s05a=$(echo -e "${sbatch_script_common} bash 05a.rarefy.sh" | ${sbatch} --dependency=afterok:${s04b} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05a)
-s05b=$(echo -e "${sbatch_script_common} bash 05b.alpha.sh" | ${sbatch} --dependency=afterok:${s05a} -N 1 -c 1 --mem=64g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05b)
+s05b=$(echo -e "${sbatch_script_common} bash 05b.alpha.sh" | ${sbatch} --dependency=afterok:${s05a} -N 1 -c 1 --mem=128g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05b)
 s05c=$(echo -e "${sbatch_script_common} bash 05c.beta.sh" | ${sbatch} --dependency=afterok:${s05a} -N 1 -c 8 --mem=24g --time=16:00:00 ${sbatch_common} -J ${TMI_NAME}-05c)
 
 if [[ ${ENV_PACKAGE} == *"built|environment"* || ${TMI_NAME} == *"lifestage"* ]];
