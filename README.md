@@ -27,3 +27,17 @@ A set of environment variables control the processing:
 If running `submit_all.sh` directly, or one of the individual scripts, it is necessary to specify the above required environment variables.
 
 Alternatively, the `reprocess.sh` script can be used which sets many of the variables above followed by executing `submit_all.sh`. If using `reprocess.sh`, it is still necessary to indicate `$QIIME_VERSION`. 
+
+# Columns of interest
+
+The `columns/` directory contains two types of files, `.txt` files that describe the variables to retain and `.json` files which manage normalizations.
+
+So why does this exist and what is it?
+
+We limit what variables we keep as the total number of variables is massive, and we’ve observed high resource needs related to representing large numbers of variables on microsetta-public-api.
+
+The entries here represent the subset of columns needed for this meta-analysis and current/future use of results from the public-api
+
+If an entry for a meta-analysis (e.g. lifestage) isn’t provided, the processing defaults to a set of general columns.
+
+The `.json` files in the columns directory describe how to normalize variables. The upstream data resource (qiita/redbiom) do not ensure standard representation of variables across studies (this is a well known hard and long running problem). So we account for this with the studies we currently use on the fly.
