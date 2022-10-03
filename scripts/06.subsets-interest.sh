@@ -49,6 +49,9 @@ if [[ ! -z "${TMI_SINGLE_SUBJECT}" ]]; then
     done
 fi
 
+python metadata_operations.py anonymize \
+    --input-output ${d}/$(tag).columns_of_interest.txt
+
 # NOTE: the input (--metadata) is updated inplace
 python metadata_operations.py sample-status \
     --metadata ${d}/$(tag).columns_of_interest.txt \
