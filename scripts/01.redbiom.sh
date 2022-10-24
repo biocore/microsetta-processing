@@ -29,3 +29,6 @@ redbiom fetch sample-metadata \
     --resolve-ambiguities \
     --from ${d}/$(tag).ids
 
+python metadata_operations.py anonymize-sample-ids \
+    --input-output-md ${d}/$(tag).txt \
+    --input-output-tab ${d}/$(tag).biom
