@@ -9,7 +9,7 @@ source config.bash
 export ENV_PACKAGE=$(echo ${ENV_PACKAGE} | tr "|" " ")
 
 if [[ -z ${QIIME_VERSION} ]]; then
-    QIIME_VERSION=2022.8
+    QIIME_VERSION=2022.2
 fi
 source activate qiime2-${QIIME_VERSION}
 
