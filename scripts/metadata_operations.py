@@ -376,8 +376,6 @@ def _remap_if_needed(df, remap, default):
     values = []
     for grp in remap:
         for col, mapping in grp.items():
-            print(col)
-            print(df[col].value_counts())
             values.append(df[col].apply(lambda x: mapping.get(x)))
 
     values = pd.DataFrame(values)
