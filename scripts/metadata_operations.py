@@ -153,7 +153,6 @@ def cli(ctx):
 def anonymize_fields(input_output):
     md = pd.read_csv(input_output, sep='\t', dtype=str)
 
-    random_studies = set()
     for study, study_grp in md.groupby('qiita_study_id'):
         if study == '10317':
             continue
@@ -166,7 +165,8 @@ def anonymize_fields(input_output):
 
 @cli.command()
 @click.option('--input-output-md', type=click.Path(exists=True), required=True)
-@click.option('--input-output-tab', type=click.Path(exists=True), required=True)
+@click.option('--input-output-tab', type=click.Path(exists=True),
+              required=True)
 def anonymize_sample_ids(input_output_md, input_output_tab):
     md = pd.read_csv(input_output_md, sep='\t', dtype=str)
     tab = biom.load_table(input_output_tab)
@@ -510,6 +510,7 @@ def test_anonymize_fuzz_age():
     assert not np.isclose(float(df.iloc[0, 1]), 2)
     assert not np.isclose(float(df.iloc[2, 1]), 30)
     assert not np.isclose(float(df.iloc[3, 1]), 40)
+
 
 def test_anonymize_fuzz_bmi():
     df = pd.DataFrame([['foo', '2', 'baz'],

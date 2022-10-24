@@ -1,12 +1,11 @@
 import click
-import qiime2, biom
+import qiime2
+import biom
 import numpy as np
 import numpy.testing as npt
 
 
 def filter(tab, min_rel_abund):
-    counts = {s: v for s, v in zip(tab.ids(), tab.sum('sample'))}
-
     def transform_f(v, i, m):
         normed = v / v.sum()
         v[normed < min_rel_abund] = 0
@@ -28,6 +27,8 @@ def test_filter():
                      ['x', 'y', 'z'])
     npt.assert_almost_equal(obs.matrix_data.toarray(),
                             exp.matrix_data.toarray())
+
+
 test_filter()
 
 
