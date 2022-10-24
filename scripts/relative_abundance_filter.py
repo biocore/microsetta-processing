@@ -35,7 +35,7 @@ test_filter()
 @click.option('--table', type=click.Path(exists=True), required=True)
 @click.option('--output', type=click.Path(exists=False), required=True)
 @click.option('--min-rel-abund', type=float, required=True)
-def filter(table, output, min_rel_abund):
+def filter_cmd(table, output, min_rel_abund):
     tab = qiime2.Artifact.load(table).view(biom.Table)
     tab = filter(tab, min_rel_abund)
     tab_ar = qiime2.Artifact.import_data('FeatureTable[Frequency]', tab)
@@ -43,4 +43,4 @@ def filter(table, output, min_rel_abund):
 
 
 if __name__ == '__main__':
-    filter()
+    filter_cmd()

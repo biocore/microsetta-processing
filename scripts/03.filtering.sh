@@ -17,10 +17,20 @@ else
     echo "Not filtering blooms"
 fi
 
-qiime feature-table filter-features \
-    --i-table ${d}/$(tag_nobloom).biom.qza \
-    --p-min-frequency ${min_feature_count} \
-    --o-filtered-table ${d}/$(tag_minfeat).biom.qza
+
+if [[ ${TMI_DATATYPE} == 'WGS' ]];
+then
+    # qiime's filter features does not implement a relative abundance filter
+    python relative_abundance_filter.py \
+        --table ${d}/$(tag_nobloom).biom.qza \
+        --output ${d}/$(tag_minfeat).biom.qza \
+        --min-rel-abund ${min_relative_abundance}
+else
+    qiime feature-table filter-features \
+        --i-table ${d}/$(tag_nobloom).biom.qza \
+        --p-min-frequency ${min_feature_count} \
+        --o-filtered-table ${d}/$(tag_minfeat).biom.qza
+fi
 
 qiime feature-table filter-samples \
     --i-table ${d}/$(tag_minfeat).biom.qza \
