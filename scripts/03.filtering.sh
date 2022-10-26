@@ -20,7 +20,7 @@ fi
 
 if [[ ${TMI_DATATYPE} == 'WGS' ]];
 then
-    # qiime's filter features does not implement a relative abundance filter
+    # TODO: use qiime's filter-features-conditionally
     python relative_abundance_filter.py \
         --table ${d}/$(tag_nobloom).biom.qza \
         --output ${d}/$(tag_minfeat).biom.qza \
