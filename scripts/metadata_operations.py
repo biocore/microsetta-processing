@@ -475,6 +475,7 @@ def test_anonymize_fuzz_age():
     assert not np.isclose(float(df.iloc[2, 1]), 30)
     assert not np.isclose(float(df.iloc[3, 1]), 40)
 
+
 def test_anonymize_fuzz_bmi():
     df = pd.DataFrame([['foo', '2', 'baz'],
                        ['foo1', 'not present', 'baz1'],
