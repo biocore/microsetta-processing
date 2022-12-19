@@ -73,7 +73,7 @@ def _anonymize_fuzz_age(study_grp):
             continue
 
         nonnull = n_samples - vals.isnull().sum()
-        fuzz = np.random.uniform(0.5, 1.5, nonnull)
+        fuzz = np.random.uniform(0.5, 5, nonnull)
         vals[~vals.isnull()] += fuzz
 
         study_grp.loc[vals[~vals.isnull()].index, c] = vals
