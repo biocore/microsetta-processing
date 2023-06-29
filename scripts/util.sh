@@ -30,7 +30,7 @@ fi
 
 if [[ ${TMI_DATATYPE} == "WGS" ]];
 then
-    redbiom_ctx=Woltka-per-genome-WoLr1-422c8e
+    redbiom_ctx=Woltka-per-genome-WoLr2-3ab352
     trim_length=None
     min_feature_count=400  # .1% upper bound
     min_sample_depth=200000
