@@ -10,6 +10,7 @@ if [[ -z ${QIIME_VERSION} ]]; then
     QIIME_VERSION=2020.11
 fi
 source activate qiime2-${QIIME_VERSION}
+source reprocess-config.bash
 
 if [[ -z ${PANFS} ]]; then
     export TMPDIR=${PANFS}/tmp
