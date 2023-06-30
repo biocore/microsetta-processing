@@ -7,8 +7,10 @@ then
     # for shotgun (woltka) data, we already have taxonomy mappings
     # so let's just obtain them
     wget \
-      -O ${d}/$(tag_mindepth).taxonomy.tsv \
+      -O ${d}/$(tag_mindepth).taxonomy.tmp.tsv \
       http://ftp.microbio.me/pub/wol2/taxonomy/lineages.txt
+    echo -e "Feature ID	Taxon" > ${d}/$(tag_mindepth).taxonomy.tsv
+    cat ${d}/$(tag_mindepth).taxonomy.tmp.tsv >> ${d}/$(tag_mindepth).taxonomy.tsv
     qiime tools import \
         --input-path ${d}/$(tag_mindepth).taxonomy.tsv \
         --output-path ${d}/$(tag_mindepth).taxonomy.qza \
