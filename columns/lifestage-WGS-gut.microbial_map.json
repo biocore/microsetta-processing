@@ -3,12 +3,12 @@
      "normalization": {"default": "NA",
                        "age_to_lifestage": {
                            "qiita_study_id": {
-                               "10317": ["age_years", "YEARS"], 
+                               "10317": ["host_age_normalized_years", "YEARS"], 
                                "10352": [null, "Adult"], 
                                "11358": ["host_age", "host_age_units"], 
                                "11937": ["host_age", "host_age_units"],
-                               "850": ["age", "host_age_units"],
-                               "10080": ["age", "host_age_units"],
+                               "850": ["host_age_normalized_years", "host_age_units"],
+                               "10080": ["host_age_normalized_years", "host_age_units"],
                                "11076": ["host_age", "host_age_units"],
                                "11882": ["host_age", "host_age_units"],
                                "11884": ["host_age", "host_age_units"],
@@ -18,7 +18,7 @@
                                "11484": ["consent_age", "host_age_units"],
                                "11666": ["host_age", "age_units"],
                                "12142": [null, "Adult"],
-                               "11405": ["age", "age_units"],
+                               "11405": ["host_age", "age_units"],
                                "1926": [null, "Adult"]
                            },
                            "lifestage": {"Infant": [0, 3],

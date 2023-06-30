@@ -4,14 +4,14 @@
                        "age_to_lifestage": {
                            "qiita_study_id": {
                                "10249": ["day_of_life", "DAYS"], 
-                               "10317": ["age_years", "YEARS"], 
+                               "10317": ["host_age_normalized_years", "YEARS"], 
                                "10352": [null, "Adult"], 
                                "11358": ["host_age", "host_age_units"], 
                                "11937": ["host_age", "host_age_units"],
-                               "850": ["age", "host_age_units"],
+                               "850": ["host_age_normalized_years", "host_age_units"],
                                "10297": ["week", "WEEKS"],
-                               "10080": ["age", "host_age_units"],
-                               "10300": ["day", "DAYS"],
+                               "10080": ["host_age_normalized_years", "host_age_units"],
+                               "10300": ["host_age", "DAYS"],
                                "11076": ["host_age", "host_age_units"],
                                "11882": ["host_age", "host_age_units"],
                                "11884": ["host_age", "host_age_units"],
