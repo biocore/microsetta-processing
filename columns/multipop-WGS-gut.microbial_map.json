@@ -1,6 +1,8 @@
 [
     {"plotting_category": "microbial_map_region",
      "normalization": {"default": "Other",
+                       "explicit_mapping": {"11666": "USA", 
+                                            "11546": "USA"},
                        "remap_if_needed": [{"country": {"USA": "North America",
                                                         "Canada": "North America",
                                                         "Mexico": "North America",
@@ -47,9 +49,15 @@
                                                              "Malawi": "Southeast Africa",
                                                              "USA": "North America",
                                                              "Norway": "Northern Europe",
-                                                             "Venezuela": "South America"
-                                                             }}
-                                          }
+                                                             "Venezuela": "South America",
+                                                             "Finland": "Northern Europe",
+                                                             "USA:NY": "North America",
+                                                             "USA:CA:San Diego": "North America",
+                                                             "United States of America": "North America"
+                                                             }},
+                                           {"country_residence": {"United States": "North America",
+                                                                  "Mexico": "North America",
+                                                                  "Philippines": "South East Asia"}}
+                                          ]}
                       }
-    }
 ]

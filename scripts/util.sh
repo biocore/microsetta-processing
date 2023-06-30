@@ -3,11 +3,13 @@
 set -x
 set -e
 
+source config.bash
+
 # unmunge spaces that are present in some env names
 export ENV_PACKAGE=$(echo ${ENV_PACKAGE} | tr "|" " ")
 
 if [[ -z ${QIIME_VERSION} ]]; then
-    QIIME_VERSION=2020.11
+    QIIME_VERSION=2022.2
 fi
 source activate qiime2-${QIIME_VERSION}
 source reprocess-config.bash
@@ -33,7 +35,7 @@ if [[ ${TMI_DATATYPE} == "WGS" ]];
 then
     redbiom_ctx=Woltka-per-genome-WoLr2-3ab352
     trim_length=None
-    min_feature_count=400  # .1% upper bound
+    min_relative_abundance=0.0007  # in hadza wgs samples, this gets us close to 16S median observed species
     min_sample_depth=200000
     rarefaction_replacement="with"
     ambiguities="merge"

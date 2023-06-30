@@ -49,7 +49,7 @@ if [[ ! -z "${TMI_SINGLE_SUBJECT}" ]]; then
     done
 fi
 
-python metadata_operations.py anonymize \
+python metadata_operations.py anonymize-fields \
     --input-output ${d}/$(tag).columns_of_interest.txt
 
 # NOTE: the input (--metadata) is updated inplace

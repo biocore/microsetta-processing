@@ -87,3 +87,4 @@ total-reads
 bloom-counts
 bloom-proportion
 processing-status
+geo_loc_name

@@ -48,6 +48,17 @@ sbatch_vars=${sbatch_vars},STUDIES=${STUDIES}
 sbatch_vars=${sbatch_vars},TMI_NAME=${TMI_NAME}
 sbatch_vars=${sbatch_vars},TMI_TITLE=$(echo ${TMI_TITLE} | tr " " ".")
 sbatch_vars=${sbatch_vars},QIIME_VERSION=${QIIME_VERSION}
+
+if [[ -z ${TMPDIR} ]];
+then
+    sbatch_vars=${sbatch_vars},TMPDIR=${TMPDIR}
+fi
+
+if [[ -z ${REDBIOM_HOST} ]];
+then
+    sbatch_vars=${sbatch_vars},REDBIOM_HOST=${REDBIOM_HOST}
+fi
+
 sbatch_common="--kill-on-invalid-dep=yes --parsable --output ${logdir}/%x.%j.out --error ${logdir}/%x.%j.err ${sbatch_vars}"
 
 if [[ -z ${EMAIL} && -f ~/.forward ]];

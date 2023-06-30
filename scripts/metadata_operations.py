@@ -17,7 +17,7 @@ def _anonymized_id(existing):
     return label
 
 
-def _anonymize_sample_and_study(random_studies, study_grp):
+def _anonymize_sample_and_study(random_studies, study_grp, df):
     # generate a unique random study ID
     study = _anonymized_id(random_studies)
     random_studies.add(study)
@@ -31,13 +31,17 @@ def _anonymize_sample_and_study(random_studies, study_grp):
 
     # create the sample IDs with the study ID
     samples = [f'{study}.{i}' for i in random_samples]
+    mapping = {u: v for u, v in zip(study_grp['#SampleID'], samples)}
 
     # update the metadata
-    study_grp.loc[study_grp.index, 'qiita_study_id'] = study
-    study_grp.loc[study_grp.index, '#SampleID'] = samples
+    df.loc[study_grp.index, '#SampleID'] = samples
+
+    # we _do not_ update qiita_study_id as it is used later on. instead,
+    # we will drop that field entirely
+    return mapping
 
 
-def _anonymize_fuzz_bmi(study_grp):
+def _anonymize_fuzz_bmi(study_grp, df):
     n_samples = len(study_grp)
     cols = ['host_body_mass_index', 'bmi']
 
@@ -55,19 +59,19 @@ def _anonymize_fuzz_bmi(study_grp):
         fuzz = np.random.uniform(0.5, 1.5, nonnull)
         vals[~vals.isnull()] += fuzz
 
-        study_grp.loc[vals[~vals.isnull()].index, c] = vals
+        df.loc[vals[~vals.isnull()].index, c] = vals
 
 
-def _anonymize_fuzz_age(study_grp):
+def _anonymize_fuzz_age(study_grp, df):
     n_samples = len(study_grp)
 
-    cols = ['age_years', 'week', 'host_age', 'day_of_life', 'age']
+    cols = ['age_years', 'week', 'host_age', 'day_of_life', 'age',
+            'consent_age']
     for c in cols:
         if c not in study_grp.columns:
             continue
 
         vals = pd.to_numeric(study_grp[c], errors='coerce')
-
         if (vals.isnull().sum() / n_samples) > 0.95:
             # this really doesn't look numeric...
             continue
@@ -76,17 +80,18 @@ def _anonymize_fuzz_age(study_grp):
         fuzz = np.random.uniform(0.5, 1.5, nonnull)
         vals[~vals.isnull()] += fuzz
 
-        study_grp.loc[vals[~vals.isnull()].index, c] = vals
+        df.loc[vals[~vals.isnull()].index, c] = vals
 
 
-def _anonymize_fuzz_country(study_grp):
-    cols = ['country', 'geo_loc_name', 'latitude', 'longitude']
+def _anonymize_fuzz_remove(study_grp, df):
+    cols = ['country', 'geo_loc_name', 'latitude', 'longitude', 'title',
+            'qiita_study_id']
 
     for c in cols:
         if c not in study_grp.columns:
             continue
 
-        study_grp.loc[study_grp.index, c] = 'Removed'
+        df.loc[study_grp.index, c] = 'Removed'
 
 
 def _table_and_ids(qza):
@@ -145,20 +150,41 @@ def cli(ctx):
 
 @cli.command()
 @click.option('--input-output', type=click.Path(exists=True), required=True)
-def anonymize(input_output):
+def anonymize_fields(input_output):
     md = pd.read_csv(input_output, sep='\t', dtype=str)
 
+    for study, study_grp in md.groupby('qiita_study_id'):
+        if study == '10317':
+            continue
+        _anonymize_fuzz_age(study_grp, md)
+        _anonymize_fuzz_bmi(study_grp, md)
+        _anonymize_fuzz_remove(study_grp, md)
+
+    md.to_csv(input_output, sep='\t', index=False, header=True)
+
+
+@cli.command()
+@click.option('--input-output-md', type=click.Path(exists=True), required=True)
+@click.option('--input-output-tab', type=click.Path(exists=True),
+              required=True)
+def anonymize_sample_ids(input_output_md, input_output_tab):
+    md = pd.read_csv(input_output_md, sep='\t', dtype=str)
+    tab = biom.load_table(input_output_tab)
+
+    mapping = dict()
     random_studies = set()
     for study, study_grp in md.groupby('qiita_study_id'):
         if study == '10317':
             continue
 
-        _anonymize_sample_and_study(random_studies, study_grp)
-        _anonymize_fuzz_age(study_grp)
-        _anonymize_fuzz_bmi(study_grp)
-        _anonymize_fuzz_country(study_grp)
+        mapping.update(_anonymize_sample_and_study(random_studies, study_grp,
+                                                   md))
 
-    md.to_csv(input_output, sep='\t', index=False, header=True)
+    tab.update_ids(mapping, inplace=True, strict=False)
+    with biom.util.biom_open(input_output_tab, 'w') as fp:
+        tab.to_hdf5(fp, 'asd')
+
+    md.to_csv(input_output_md, sep='\t', index=False, header=True)
 
 
 @cli.command()
@@ -414,6 +440,8 @@ def _age_to_lifestage(df, mappings, default):
             age = age / 365
         elif units == 'weeks':
             age = age / 52
+        elif units == 'months':
+            age = age / 12
 
         stage = default
         for label, (low, high) in stages.items():
@@ -428,6 +456,11 @@ def _age_to_lifestage(df, mappings, default):
     return new_values
 
 
+def _hard_remap(df, mapping):
+    for study_id, country in mapping.items():
+        df.loc[df['qiita_study_id'] == study_id, 'country'] = country
+
+
 @cli.command(name="microbial-map")
 @click.option('--input-output', type=click.Path(exists=True), required=True)
 @click.option('--normalization', type=click.Path(exists=True), required=True)
@@ -439,6 +472,9 @@ def microbial_map(input_output, normalization):
         plotting_category = norm_detail['plotting_category']
         norm = norm_detail['normalization']
         default = norm['default']
+
+        if 'explicit_mapping' in norm:
+            _hard_remap(df, norm['explicit_mapping'])
 
         if 'remap_if_needed' in norm:
             new_values = _remap_if_needed(df, norm['remap_if_needed'], default)
@@ -452,13 +488,13 @@ def microbial_map(input_output, normalization):
     df.to_csv(input_output, sep='\t', index=True, header=True)
 
 
-def test_anonymize_fuzz_country():
+def test_anonymize_fuzz_remove():
     df = pd.DataFrame([['foo', 'bar', 'baz'],
                        ['foo1', 'bar', 'baz1'],
                        ['foo2', 'bar1', 'baz2'],
                        ['foo3', 'bar1', 'baz3']],
                       columns=['#SampleID', 'country', 'latitude'])
-    _anonymize_fuzz_country(df)
+    _anonymize_fuzz_remove(df, df)
     assert set(df['country']) == {'Removed', }
     assert set(df['latitude']) == {'Removed', }
 
@@ -469,11 +505,12 @@ def test_anonymize_fuzz_age():
                        ['foo2', '30', 'baz2'],
                        ['foo3', '40', 'baz3']],
                       columns=['#SampleID', 'age', 'other'])
-    _anonymize_fuzz_age(df)
+    _anonymize_fuzz_age(df, df)
     assert 'not present' in list(df['age'])
     assert not np.isclose(float(df.iloc[0, 1]), 2)
     assert not np.isclose(float(df.iloc[2, 1]), 30)
     assert not np.isclose(float(df.iloc[3, 1]), 40)
+
 
 def test_anonymize_fuzz_bmi():
     df = pd.DataFrame([['foo', '2', 'baz'],
@@ -481,7 +518,7 @@ def test_anonymize_fuzz_bmi():
                        ['foo2', '30', 'baz2'],
                        ['foo3', '40', 'baz3']],
                       columns=['#SampleID', 'bmi', 'other'])
-    _anonymize_fuzz_bmi(df)
+    _anonymize_fuzz_bmi(df, df)
     assert 'not present' in list(df['bmi'])
     assert not np.isclose(float(df.iloc[0, 1]), 2)
     assert not np.isclose(float(df.iloc[2, 1]), 30)
@@ -496,7 +533,7 @@ def test_anonymize_sample_and_study():
                       columns=['#SampleID', 'qiita_study_id', 'thing'])
 
     random_studies = set()
-    _anonymize_sample_and_study(random_studies, df)
+    _anonymize_sample_and_study(random_studies, df, df)
 
     assert list(df['thing']) == ['baz', 'baz1', 'baz2', 'baz3']
     assert 'foo' not in df['#SampleID']
@@ -508,7 +545,7 @@ def test_anonymize_sample_and_study():
 
 
 test_anonymize_sample_and_study()
-test_anonymize_fuzz_country()
+test_anonymize_fuzz_remove()
 test_anonymize_fuzz_age()
 test_anonymize_fuzz_bmi()
 
