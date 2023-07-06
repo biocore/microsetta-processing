@@ -8,6 +8,7 @@ day_of_life
 bmi_cat
 body_site
 country
+country_residence
 geo_loc_name
 latitude
 longitude

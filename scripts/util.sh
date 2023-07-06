@@ -32,7 +32,7 @@ fi
 
 if [[ ${TMI_DATATYPE} == "WGS" ]];
 then
-    redbiom_ctx=Woltka-per-genome-WoLr1-422c8e
+    redbiom_ctx=Woltka-per-genome-WoLr2-3ab352
     trim_length=None
     min_relative_abundance=0.0007  # in hadza wgs samples, this gets us close to 16S median observed species
     min_sample_depth=200000

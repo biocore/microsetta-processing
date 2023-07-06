@@ -7,8 +7,12 @@ then
     # for shotgun (woltka) we already have a phylogeny, so let's just
     # obtain that
     wget \
-        -O ${d}/$(tag_mindepth).tree.qza \
-        https://biocore.github.io/wol/data/trees/tree.qza
+        -O ${d}/$(tag_mindepth).tree.nwk \
+        http://ftp.microbio.me/pub/wol2/phylogeny/tree.nwk
+    qiime tools import \
+        --input-path ${d}/$(tag_mindepth).tree.nwk \
+        --output-path ${d}/$(tag_mindepth).tree.qza \
+        --type Phylogeny[Rooted]
 
     # and the feature space already overlaps with the tree so
     # we get this for free

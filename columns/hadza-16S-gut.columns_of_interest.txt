@@ -2,3 +2,4 @@ host_age
 host_life_stage
 seasonality
 title
+qiita_study_id

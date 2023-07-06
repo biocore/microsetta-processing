@@ -1,4 +1,5 @@
 adult_infant
+host_age_normalized_years
 age_cat
 age_units
 host_age
