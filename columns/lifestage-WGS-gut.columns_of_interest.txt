@@ -13,6 +13,7 @@ day
 week
 bmi_cat
 body_site
+host_body_site
 country
 geo_loc_name
 latitude

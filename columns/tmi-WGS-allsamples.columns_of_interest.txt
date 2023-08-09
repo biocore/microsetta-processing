@@ -1,6 +1,7 @@
 age_cat
 bmi_cat
 body_site
+host_body_site
 country
 country_residence
 latitude
