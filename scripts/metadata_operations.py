@@ -154,7 +154,7 @@ def _normalize_gender_and_sex(df):
     # If the DataFrame has a gender_v2 column, map it back into sex
     if 'gender_v2' in df:
         df['sex'] = np.where(
-            df['gender_v2'].isin(list(gender_v2_mapping.keys())),
+            df['gender_v2'].isin(list(gender_v2_mapping)),
             df['gender_v2'],
             df['sex']
         )
@@ -210,9 +210,7 @@ def anonymize_sample_ids(input_output_md, input_output_tab):
 
 @cli.command()
 @click.option('--input-output-md', type=click.Path(exists=True), required=True)
-@click.option('--input-output-tab', type=click.Path(exists=True),
-              required=True)
-def normalize_gender_and_sex(input_output_md, input_output_tab):
+def normalize_gender_and_sex(input_output_md):
     """Normalize gender_v2 and sex columns
 
     10317 has historically used the 'sex' field to reflect a participant's
@@ -224,15 +222,7 @@ def normalize_gender_and_sex(input_output_md, input_output_tab):
     response to gender_v2.
     """
     md = pd.read_csv(input_output_md, sep='\t', dtype=str)
-    tab = biom.load_table(input_output_tab)
-
-    mapping = dict()
-    mapping.update(_normalize_gender_and_sex(md))
-
-    tab.update_ids(mapping, inplace=True, strict=False)
-    with biom.util.biom_open(input_output_tab, 'w') as fp:
-        tab.to_hdf5(fp, 'asd')
-
+    md = _normalize_gender_and_sex(md)
     md.to_csv(input_output_md, sep='\t', index=False, header=True)
 
 

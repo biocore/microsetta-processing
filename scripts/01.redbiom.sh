@@ -34,5 +34,4 @@ python metadata_operations.py anonymize-sample-ids \
     --input-output-tab ${d}/$(tag).biom
 
 python metadata_operations.py normalize-gender-and-sex \
-    --input-output-md ${d}/$(tag).txt \
-    --input-output-tab ${d}/$(tag).biom
+    --input-output-md ${d}/$(tag).txt
