@@ -142,6 +142,27 @@ def _categories_and_types(categories):
     return cats, types
 
 
+def _normalize_gender_and_sex(df):
+    # Establish the mapping between gender_v2 values and sex values
+    gender_v2_mapping = {
+        "Female": "female",
+        "Male": "male",
+        "Not sure": "other",
+        "not provided": "not provided"
+    }
+
+    # If the DataFrame has a gender_v2 column, map it back into sex
+    if 'gender_v2' in df:
+        df['sex'] = np.where(
+            df['gender_v2'].isin(list(gender_v2_mapping.keys())),
+            df['gender_v2'],
+            df['sex']
+        )
+        df['sex'].replace(gender_v2_mapping, inplace=True)
+
+    return df
+
+
 @click.group()
 @click.pass_context
 def cli(ctx):
@@ -179,6 +200,34 @@ def anonymize_sample_ids(input_output_md, input_output_tab):
 
         mapping.update(_anonymize_sample_and_study(random_studies, study_grp,
                                                    md))
+
+    tab.update_ids(mapping, inplace=True, strict=False)
+    with biom.util.biom_open(input_output_tab, 'w') as fp:
+        tab.to_hdf5(fp, 'asd')
+
+    md.to_csv(input_output_md, sep='\t', index=False, header=True)
+
+
+@cli.command()
+@click.option('--input-output-md', type=click.Path(exists=True), required=True)
+@click.option('--input-output-tab', type=click.Path(exists=True),
+              required=True)
+def normalize_gender_and_sex(input_output_md, input_output_tab):
+    """Normalize gender_v2 and sex columns
+
+    10317 has historically used the 'sex' field to reflect a participant's
+    gender. Post-relaunch, we reworded the question and are using 'gender_v2'
+    to store the response to the new question. While we want to keep these
+    separate for analysis purposes, we're going to temporarily normalize them
+    to generate reports for users. The least invasive way to do this is to
+    copy gender_v2 responses into sex for any participants who have a valid
+    response to gender_v2.
+    """
+    md = pd.read_csv(input_output_md, sep='\t', dtype=str)
+    tab = biom.load_table(input_output_tab)
+
+    mapping = dict()
+    mapping.update(_normalize_gender_and_sex(md))
 
     tab.update_ids(mapping, inplace=True, strict=False)
     with biom.util.biom_open(input_output_tab, 'w') as fp:
@@ -544,10 +593,61 @@ def test_anonymize_sample_and_study():
     assert 'bar1' not in df['qiita_study_id']
 
 
+def test_normalize_gender_and_sex():
+    # First, test the normalization on data we'd expect from 10317
+    orig = pd.DataFrame(
+        [
+            ['foo', None, 'Male'],
+            ['foo1', None, 'Female'],
+            ['foo2', 'not provided', 'Not sure'],
+            ['foo3', 'male', 'Female'],
+            ['foo4', None, 'not provided'],
+            ['foo5', 'male', 'not provided'],
+            ['foo6', 'male', None],
+            ['foo7', None, None]
+        ],
+        columns=['#SampleID', 'sex', 'gender_v2']
+    )
+    exp = pd.DataFrame(
+        [
+            ['foo', 'male', 'Male'],
+            ['foo1', 'female', 'Female'],
+            ['foo2', 'other', 'Not sure'],
+            ['foo3', 'female', 'Female'],
+            ['foo4', 'not provided', 'not provided'],
+            ['foo5', 'not provided', 'not provided'],
+            ['foo6', 'male', None],
+            ['foo7', None, None]
+        ],
+        columns=['#SampleID', 'sex', 'gender_v2']
+    )
+    obs = _normalize_gender_and_sex(orig)
+    pd.testing.assert_frame_equal(exp, obs)
+
+    # Next, make sure that the function won't fail or skew data for studies
+    # other than 10317
+    orig = pd.DataFrame(
+        [
+            ['foo', None],
+            ['foo1', None],
+            ['foo2', 'not provided'],
+            ['foo3', 'male'],
+            ['foo4', None],
+            ['foo5', 'male'],
+            ['foo6', 'male'],
+            ['foo7', None]
+        ],
+        columns=['#SampleID', 'sex']
+    )
+    obs = _normalize_gender_and_sex(orig)
+    pd.testing.assert_frame_equal(orig, obs)
+
+
 test_anonymize_sample_and_study()
 test_anonymize_fuzz_remove()
 test_anonymize_fuzz_age()
 test_anonymize_fuzz_bmi()
+test_normalize_gender_and_sex()
 
 
 if __name__ == '__main__':
