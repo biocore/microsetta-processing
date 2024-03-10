@@ -200,8 +200,8 @@ def anonymize_sample_ids(input_output_md, input_output_tab):
 
         mapping.update(_anonymize_sample_and_study(random_studies, study_grp,
                                                    md))
-
-    tab.update_ids(mapping, inplace=True, strict=False)
+    if len(mapping) > 0:
+        tab.update_ids(mapping, inplace=True, strict=False)
     with biom.util.biom_open(input_output_tab, 'w') as fp:
         tab.to_hdf5(fp, 'asd')
 

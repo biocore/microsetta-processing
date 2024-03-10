@@ -51,7 +51,7 @@ if [[ ! -z "${TMI_WEIGHTED_UNIFRAC}" ]]; then
     echo "${d}/beta/weighted_normalized_unifrac.qza" >> $SAFE_TO_DROP
         
     python k_neighbors.py neighbors \
-        --distance-matrix ${d}/beta/weighted_unifrac.qza \
+        --distance-matrix ${d}/beta/weighted_normalized_unifrac.qza \
         --output ${d}/beta/weighted_unifrac_neighbors.tsv \
         --k 100 \
         --mask-study-id 10317
