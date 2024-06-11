@@ -21,10 +21,15 @@ fi
 if [[ ${TMI_DATATYPE} == 'WGS' ]];
 then
     # TODO: use qiime's filter-features-conditionally
-    python relative_abundance_filter.py \
-        --table ${d}/$(tag_nobloom).biom.qza \
-        --output ${d}/$(tag_minfeat).biom.qza \
-        --min-rel-abund ${min_relative_abundance}
+    # python relative_abundance_filter.py \
+    #     --table ${d}/$(tag_nobloom).biom.qza \
+    #     --output ${d}/$(tag_minfeat).biom.qza \
+    #     --min-rel-abund ${min_relative_abundance}
+    qiime feature-table filter-features-conditionally \
+		--i-table ${d}/$(tag_nobloom).biom.qza \
+		--o-filtered-table ${d}/$(tag_minfeat).biom.qza \
+		--p-abundance 0.0007 \
+		--p-prevalence 0.20
 else
     qiime feature-table filter-features \
         --i-table ${d}/$(tag_nobloom).biom.qza \
