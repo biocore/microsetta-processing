@@ -110,7 +110,7 @@ else
     s06_dep="${s05c}:${s05d}"
 fi
 s06=$(echo -e "${sbatch_script_common} bash 06.subsets-interest.sh" | ${sbatch} --dependency=afterok:${s06_dep} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-06)
-s07a=$(echo -e "${sbatch_script_common} bash 07a.pcoa.sh" | ${sbatch} --dependency=afterok:${s06} -N 1 -c 1 --mem=64g --time=2:00:00 ${sbatch_common} -J ${TMI_NAME}-07a)
+s07a=$(echo -e "${sbatch_script_common} bash 07a.pcoa.sh" | ${sbatch} --dependency=afterok:${s06} -N 1 -c 1 --mem=256g --time=2:00:00 ${sbatch_common} -J ${TMI_NAME}-07a)
 
 # emit the final job
 echo ${s07a}
