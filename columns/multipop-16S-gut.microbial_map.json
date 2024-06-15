@@ -422,7 +422,9 @@
                                                               "US:WY": "North America",
                                                               "usa:ca:san diego": "North America",
                                                               "usa:unspecified": "North America",
-							      "Finland": "Europe"
+                                                              "Finland": "Europe",
+                                                              "Malawi": "Africa",
+                                                              "United States of America": "North America"
                                                              }},
                          {"country_residence": {"United States": "North America",
                                                                   "Japan": "Asia",
