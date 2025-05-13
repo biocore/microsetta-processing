@@ -228,4 +228,4 @@ sleep ${SUBMIT_DELAY}
 dependency=$(join_by : ${jobs[@]})
 cwd=$(pwd)
 sbatch_script_common="#!/bin/bash\ncd ${cwd}\n"
-echo -e "${sbatch_script_common} bash 08.cleanup.sh" | sbatch --dependency=afterok:${dependency} --export=DATETAG=${datetag} -N 1 -c 1 --mem=1g --time=1:00:00 --job-name TMI-cleanup
+echo -e "${sbatch_script_common} bash 08.cleanup.sh" | sbatch --dependency=afterok:${dependency} --export=DATETAG=${datetag},QIIME_VERSION=${QIIME_VERSION} -N 1 -c 1 --mem=1g --time=1:00:00 --job-name TMI-cleanup

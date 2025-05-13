@@ -96,7 +96,7 @@ fi
 
 s05a=$(echo -e "${sbatch_script_common} bash 05a.rarefy.sh" | ${sbatch} --dependency=afterok:${s04b} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05a)
 s05b=$(echo -e "${sbatch_script_common} bash 05b.alpha.sh" | ${sbatch} --dependency=afterok:${s05a} -N 1 -c 1 --mem=128g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-05b)
-s05c=$(echo -e "${sbatch_script_common} bash 05c.beta.sh" | ${sbatch} --dependency=afterok:${s05a} -N 1 -c 8 --mem=24g --time=16:00:00 ${sbatch_common} -J ${TMI_NAME}-05c)
+s05c=$(echo -e "${sbatch_script_common} bash 05c.beta.sh" | ${sbatch} --dependency=afterok:${s05a} -N 1 -c 8 --mem=64g --time=16:00:00 ${sbatch_common} -J ${TMI_NAME}-05c)
 
 if [[ ${ENV_PACKAGE} == *"built|environment"* || ${TMI_NAME} == *"lifestage"* ]];
 then
@@ -110,7 +110,7 @@ else
     s06_dep="${s05c}:${s05d}"
 fi
 s06=$(echo -e "${sbatch_script_common} bash 06.subsets-interest.sh" | ${sbatch} --dependency=afterok:${s06_dep} -N 1 -c 1 --mem=16g --time=4:00:00 ${sbatch_common} -J ${TMI_NAME}-06)
-s07a=$(echo -e "${sbatch_script_common} bash 07a.pcoa.sh" | ${sbatch} --dependency=afterok:${s06} -N 1 -c 1 --mem=64g --time=2:00:00 ${sbatch_common} -J ${TMI_NAME}-07a)
+s07a=$(echo -e "${sbatch_script_common} bash 07a.pcoa.sh" | ${sbatch} --dependency=afterok:${s06} -N 1 -c 1 --mem=256g --time=2:00:00 ${sbatch_common} -J ${TMI_NAME}-07a)
 
 # emit the final job
 echo ${s07a}
