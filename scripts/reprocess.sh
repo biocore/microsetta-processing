@@ -92,7 +92,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta WGS skin samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_WGS}-${SAMPLETYPE_SKIN}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 sleep ${SUBMIT_DELAY}
 
 export TMI_DATATYPE=$TYPE_WGS
