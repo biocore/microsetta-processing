@@ -35,7 +35,7 @@ then
     if [[ ${ENV_PACKAGE} == "human-skin" ]];
     then
         redbiom_ctx=Woltka-per-genome-WoLr2-67d14f
-        min_sample_depth=50000
+        min_sample_depth=100000
     else
         redbiom_ctx=Woltka-per-genome-WoLr2-3ab352
         min_sample_depth=200000

@@ -101,7 +101,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta WGS oral samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_WGS}-${SAMPLETYPE_ORAL}
 echo $TMI_NAME
-jobs+=($(sh submit_all.sh))
+#jobs+=($(sh submit_all.sh))
 sleep ${SUBMIT_DELAY}
 
 export TMI_DATATYPE=$TYPE_WGS
@@ -147,7 +147,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S skin samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_16S}-${SAMPLETYPE_SKIN}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 sleep ${SUBMIT_DELAY}
 
 export TMI_DATATYPE=$TYPE_16S
@@ -156,7 +156,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S oral samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_16S}-${SAMPLETYPE_ORAL}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 sleep ${SUBMIT_DELAY}
 
 export TMI_DATATYPE=$TYPE_16S
@@ -165,7 +165,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S fecal samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_16S}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 sleep ${SUBMIT_DELAY}
 
 export TMI_DATATYPE=$TYPE_16S
@@ -174,7 +174,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta 16S all samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_16S}-${SAMPLETYPE_ALL}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 sleep ${SUBMIT_DELAY}
 
 # Multipop gut 16S
@@ -184,7 +184,7 @@ export STUDIES=${STUDY_TMI}.${STUDY_MULTIPOP_16S_FECAL}
 export TMI_TITLE="Meta-analysis 16S fecal samples"
 export TMI_NAME=${DATASET_MULTIPOP}-${TYPE_16S}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 sleep ${SUBMIT_DELAY}
 
 export TMI_DATATYPE=$TYPE_16S
@@ -193,7 +193,7 @@ export STUDIES=${STUDY_TMI}.${STUDY_LIFESTAGE_16S_FECAL}
 export TMI_TITLE="Meta-analysis 16S lifestage fecal samples"
 export TMI_NAME=${DATASET_LIFESTAGE}-${TYPE_16S}-${SAMPLETYPE_GUT}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 sleep ${SUBMIT_DELAY}
 
 export TMI_DATATYPE=$TYPE_16S
@@ -222,7 +222,7 @@ export STUDIES=${STUDY_TMI}.${STUDY_BUILTENV}
 export TMI_TITLE="Meta-analysis 16S built environment and multi-bodysite samples"
 export TMI_NAME=${DATASET_BUILTENV}-${TYPE_16S}-${SAMPLETYPE_ALL}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 sleep ${SUBMIT_DELAY}
 
 dependency=$(join_by : ${jobs[@]})
