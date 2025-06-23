@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source activate qiime2-${QIIME_VERSION}
+
 python cleanup.py create-configuration \
     --base=../results/current \
     --output=../results/current/api-config.json \

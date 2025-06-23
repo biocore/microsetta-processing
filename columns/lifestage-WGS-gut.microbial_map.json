@@ -18,7 +18,7 @@
                                "11484": ["consent_age", "host_age_units"],
                                "11666": ["host_age", "age_units"],
                                "12142": [null, "Adult"],
-                               "11405": ["host_age", "age_units"],
+                               "11405": ["host_age", "host_age_units"],
                                "1926": [null, "Adult"]
                            },
                            "lifestage": {"Infant": [0, 3],
