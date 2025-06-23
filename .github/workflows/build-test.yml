@@ -9,7 +9,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v2
     - name: set up python 3.8
@@ -23,7 +23,7 @@ jobs:
         pip install -q flake8
         flake8 scripts/*.py
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     container:
       image: docker://quay.io/qiime2/core:2020.11
     steps:
