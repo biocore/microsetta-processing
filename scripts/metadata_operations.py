@@ -474,7 +474,7 @@ def _age_to_lifestage(df, mappings, default):
             col = units.split(':', 1)[1]
             try:
                 return row[col].capitalize()
-            except: #noqa
+            except:  #noqa
                 pass
         else:
             units = row[units]
