@@ -92,7 +92,7 @@ export STUDIES=$STUDY_TMI
 export TMI_TITLE="Microsetta WGS skin samples"
 export TMI_NAME=${DATASET_TMI}-${TYPE_WGS}-${SAMPLETYPE_SKIN}
 echo $TMI_NAME
-#jobs+=($(sh submit_all.sh))
+jobs+=($(sh submit_all.sh))
 sleep ${SUBMIT_DELAY}
 
 export TMI_DATATYPE=$TYPE_WGS
@@ -228,4 +228,4 @@ sleep ${SUBMIT_DELAY}
 dependency=$(join_by : ${jobs[@]})
 cwd=$(pwd)
 sbatch_script_common="#!/bin/bash\ncd ${cwd}\n"
-echo -e "${sbatch_script_common} bash 08.cleanup.sh" | sbatch --dependency=afterok:${dependency} --export=DATETAG=${datetag} -N 1 -c 1 --mem=1g --time=1:00:00 --job-name TMI-cleanup
+echo -e "${sbatch_script_common} bash 08.cleanup.sh" | sbatch --dependency=afterok:${dependency} --export=DATETAG=${datetag},QIIME_VERSION=${QIIME_VERSION} -N 1 -c 1 --mem=1g --time=1:00:00 --job-name TMI-cleanup

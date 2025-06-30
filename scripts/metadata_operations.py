@@ -439,11 +439,13 @@ def _age_to_lifestage(df, mappings, default):
         if age is None:
             continue
 
-        ages.add(age)
-        cols.add(age)
+        if age in df.columns:
+            ages.add(age)
+            cols.add(age)
+
         if units is not None and \
                 units not in ('YEARS', 'DAYS', 'WEEKS') and \
-                not units.startswith('NULLUSE'):
+                not units.startswith('NULLUSE') and units in df.columns:
             cols.add(units)
         if units is not None and units.startswith('NULLUSE'):
             cols.add(units.split(':', 1)[1])
@@ -470,7 +472,10 @@ def _age_to_lifestage(df, mappings, default):
             units = 'weeks'
         elif units.startswith('NULLUSE'):
             col = units.split(':', 1)[1]
-            return row[col].capitalize()
+            try:
+                return row[col].capitalize()
+            except:  # noqa
+                pass
         else:
             units = row[units]
 
