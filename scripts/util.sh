@@ -34,12 +34,13 @@ if [[ ${TMI_DATATYPE} == "WGS" ]];
 then
     if [[ ${ENV_PACKAGE} == "human-skin" ]];
     then
-        redbiom_ctx=Woltka-per-genome-WoLr2-67d14f
+        #redbiom_ctx=Woltka-per-genome-WoLr2-67d14f
         min_sample_depth=100000
     else
-        redbiom_ctx=Woltka-per-genome-WoLr2-3ab352
+        #redbiom_ctx=Woltka-per-genome-WoLr2-3ab352
         min_sample_depth=200000
     fi
+    redbiom_ctx=Woltka-per-genome-WoLr2-67d14f
     trim_length=None
     min_relative_abundance=0.0007  # in hadza wgs samples, this gets us close to 16S median observed species
     rarefaction_replacement="with"
